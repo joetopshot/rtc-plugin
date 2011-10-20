@@ -26,26 +26,23 @@ import java.util.logging.Logger;
  */
 public class JazzSCM extends SCM {
 
-    protected static final Logger log = Logger.getLogger(JazzSCM.class.getName());
+    protected static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
 
     private String repositoryLocation;
     private String workspaceName;
-    private String buildEngineId;
-    private String buildDefinitionId;
+    private String streamName;
     private String username;
     private String password;
 
     @DataBoundConstructor
-    public JazzSCM(String repositoryLocation, String workspaceName,
-                   String buildEngineId, String buildDefinitionId, String username,
-                   String password) {
+    public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
+                   String username, String password) {
 
-        log.log(Level.FINER, "In JazzSCM constructor");
+        logger.log(Level.FINER, "In JazzSCM constructor");
 
         this.repositoryLocation = repositoryLocation;
         this.workspaceName = workspaceName;
-        this.buildEngineId = buildEngineId;
-        this.buildDefinitionId = buildDefinitionId;
+        this.streamName = streamName;
         this.username = username;
         this.password = password;
     }
@@ -58,12 +55,8 @@ public class JazzSCM extends SCM {
         return workspaceName;
     }
 
-    public String getBuildEngineId() {
-        return buildEngineId;
-    }
-
-    public String getBuildDefinitionId() {
-        return buildDefinitionId;
+    public String getStreamName() {
+        return streamName;
     }
 
     public String getUsername() {
@@ -81,7 +74,8 @@ public class JazzSCM extends SCM {
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        JazzCmd cmd = new JazzCmd(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
+        return (cmd.getChanges() != null) ? PollingResult.BUILD_NOW : PollingResult.NO_CHANGES;
     }
 
     @Override
@@ -92,6 +86,11 @@ public class JazzSCM extends SCM {
     @Override
     public ChangeLogParser createChangeLogParser() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     @Extension
