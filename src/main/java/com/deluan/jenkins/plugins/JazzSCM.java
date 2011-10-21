@@ -1,5 +1,8 @@
 package com.deluan.jenkins.plugins;
 
+import com.deluan.jenkins.plugins.changelog.JazzChangeLogFormatter;
+import com.deluan.jenkins.plugins.changelog.JazzChangeLogParser;
+import com.deluan.jenkins.plugins.changelog.JazzChangeSet;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -17,6 +20,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,6 +71,11 @@ public class JazzSCM extends SCM {
         return password;
     }
 
+    private JazzCLI getCliInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
+        return new JazzCLI(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(), getDescriptor().getJazzSandbox(),
+                username, password, repositoryLocation, streamName, workspaceName);
+    }
+
     @Override
     public SCMRevisionState calcRevisionsFromBuild(AbstractBuild<?, ?> build, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
         return null; // This implementation is not necessary, as this information is obtained from the remote RTC's repository
@@ -74,14 +83,29 @@ public class JazzSCM extends SCM {
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        JazzCLI cmd = new JazzCLI(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
-        // TODO: Use cmd.checkForChanges()
-        return (cmd.getChanges() != null) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
+        JazzCLI cmd = getCliInstance(launcher, listener, workspace);
+        try {
+            return (cmd.hasChanges()) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
+        } catch (Exception e) {
+            return PollingResult.BUILD_NOW;
+        }
     }
 
     @Override
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        boolean result = false;
+        JazzCLI cmd = getCliInstance(launcher, listener, workspace);
+        JazzChangeLogFormatter formatter = new JazzChangeLogFormatter();
+
+        try {
+            List<JazzChangeSet> changeSetList = cmd.getChanges();
+            formatter.format(changeSetList, changelogFile);
+            result = cmd.load();
+        } catch (Exception e) {
+            result = cmd.load();
+            createEmptyChangeLog(changelogFile, listener, "changelog");
+        }
+        return result;
     }
 
     @Override
@@ -97,6 +121,7 @@ public class JazzSCM extends SCM {
     @Extension
     public static class DescriptorImpl extends SCMDescriptor<JazzSCM> {
         private String jazzExecutable;
+        private String jazzSandbox;
 
         public DescriptorImpl() {
             super(JazzSCM.class, null);
@@ -111,6 +136,7 @@ public class JazzSCM extends SCM {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
             jazzExecutable = Util.fixEmpty(req.getParameter("rtc.jazzExecutable").trim());
+            jazzSandbox = Util.fixEmpty(req.getParameter("rtc.jazzSandbox").trim());
             save();
             return true;
         }
@@ -121,6 +147,10 @@ public class JazzSCM extends SCM {
             } else {
                 return jazzExecutable;
             }
+        }
+
+        public String getJazzSandbox() {
+            return jazzSandbox;
         }
 
         public FormValidation doExecutableCheck(@QueryParameter String value) {

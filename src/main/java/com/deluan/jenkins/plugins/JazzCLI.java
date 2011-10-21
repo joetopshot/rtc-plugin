@@ -1,11 +1,14 @@
 package com.deluan.jenkins.plugins;
 
+import com.deluan.jenkins.plugins.changelog.JazzChangeSet;
 import hudson.AbortException;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.ForkOutputStream;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -30,11 +33,15 @@ public class JazzCLI {
     private String streamName;
     private String username;
     private String password;
+    private FilePath jobWorkspace;
+    private String jazzSandbox;
 
 
-    public JazzCLI(Launcher launcher, TaskListener listener, String rtcExecutable, String user, String password,
+    public JazzCLI(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
+                   String jazzSandbox, String user, String password,
                    String repositoryLocation, String streamName, String workspaceName) {
-        base = new ArgumentListBuilder(rtcExecutable);
+        base = new ArgumentListBuilder(jazzExecutable);
+        this.jazzSandbox = jazzSandbox;
         this.launcher = launcher;
         this.listener = listener;
         this.username = user;
@@ -42,20 +49,60 @@ public class JazzCLI {
         this.repositoryLocation = repositoryLocation;
         this.streamName = streamName;
         this.workspaceName = workspaceName;
+        this.jobWorkspace = jobWorkspace;
     }
 
-    public boolean checkForChanges() throws IOException, InterruptedException {
+    private ArgumentListBuilder addAuthInfo(ArgumentListBuilder args) {
+        if (StringUtils.isNotBlank(username)) {
+            args.add("-u", username);
+        }
+        if (StringUtils.isNotBlank(password)) {
+            args.add("-P", password);
+        }
+
+        return args;
+    }
+
+    public boolean hasChanges() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("status");
-        args.add("-u", username);
-        args.add("-P", password);
+        addAuthInfo(args);
         args.add("-C", "-w", "-n");
+        args.add("-d");
+        args.add(jobWorkspace);
 
         logger.log(Level.FINER, args.toStringWithQuote());
 
         String output = new String(popen(args).toByteArray());
 
-        return output.contains("    Incoming:");
+        return output.contains("    Entrada:"); //FIXME How to force english?!
+    }
+
+    public boolean load() throws IOException, InterruptedException {
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("load", workspaceName);
+        addAuthInfo(args);
+        args.add("-r", repositoryLocation);
+        args.add("-d");
+        args.add(jobWorkspace);
+        args.add("-f");
+
+        logger.log(Level.FINER, args.toStringWithQuote());
+
+        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
+    }
+
+    public boolean isLoaded() throws IOException, InterruptedException {
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("status");
+        addAuthInfo(args);
+        args.add("-d");
+        args.add(jobWorkspace);
+        args.add("-C", "-w", "-n");
+
+        logger.log(Level.FINER, args.toStringWithQuote());
+
+        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
     public List<JazzChangeSet> getChanges() throws IOException, InterruptedException {
@@ -63,12 +110,11 @@ public class JazzCLI {
 
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("compare");
-//        args.add("ws", workspaceName);
-//        args.add("stream", streamName);
-        args.add("ws", "Negociacao Principal Workspace - Deluan");
         args.add("ws", workspaceName);
-        args.add("-u", username);
-        args.add("-P", password);
+        args.add("stream", streamName);
+//        args.add("ws", "Negociacao Principal Workspace - Deluan");
+//        args.add("ws", workspaceName);
+        addAuthInfo(args);
         args.add("-r", repositoryLocation);
         args.add("-I", "s");
         args.add("-C", '"' + JazzChangeSet.CONTRIBUTOR_FORMAT + '"');
@@ -92,7 +138,7 @@ public class JazzCLI {
 
     private ProcStarter l(ArgumentListBuilder args) {
         // set the default stdout
-        return launcher.launch().cmds(args).stdout(listener);
+        return launcher.launch().cmds(args).stdout(listener).pwd(jazzSandbox);
     }
 
     private ProcStarter run(String... args) {
