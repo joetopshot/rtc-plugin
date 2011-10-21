@@ -20,12 +20,12 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     private String date;
     private String rev;
     private String msg;
-    
+
     JazzChangeSet(String line) {
         System.out.println(line);
         String[] parts = line.split("\\|");
         this.rev = parts[0].trim().substring(1);
-        this.rev = rev.substring(0, rev.length()-1);
+        this.rev = rev.substring(0, rev.length() - 1);
         this.author = parts[1].trim();
         this.author = author + " <" + parts[1].trim() + ">";
         this.msg = parts[3].trim();
@@ -56,6 +56,11 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     public Collection<String> getAffectedPaths() {
         // TODO How to get this information?
         return Collections.emptyList();
+    }
+
+    @Override
+    protected void setParent(ChangeLogSet parent) {
+        super.setParent(parent);
     }
 
 }
