@@ -75,6 +75,7 @@ public class JazzSCM extends SCM {
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
         JazzCLI cmd = new JazzCLI(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
+        // TODO: Use cmd.checkForChanges()
         return (cmd.getChanges() != null) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
     }
 

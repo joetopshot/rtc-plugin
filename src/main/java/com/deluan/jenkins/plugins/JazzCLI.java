@@ -44,6 +44,20 @@ public class JazzCLI {
         this.workspaceName = workspaceName;
     }
 
+    public boolean checkForChanges() throws IOException, InterruptedException {
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("status");
+        args.add("-u", username);
+        args.add("-P", password);
+        args.add("-C", "-w", "-n");
+
+        logger.log(Level.FINER, args.toStringWithQuote());
+
+        String output = new String(popen(args).toByteArray());
+
+        return output.contains("    Incoming:");
+    }
+
     public List<JazzChangeSet> getChanges() throws IOException, InterruptedException {
         List<JazzChangeSet> result = new ArrayList<JazzChangeSet>();
 
