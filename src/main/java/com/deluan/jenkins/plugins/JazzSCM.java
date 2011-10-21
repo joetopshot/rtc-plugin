@@ -74,7 +74,7 @@ public class JazzSCM extends SCM {
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        JazzCmd cmd = new JazzCmd(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
+        JazzCLI cmd = new JazzCLI(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
         return (cmd.getChanges() != null) ? PollingResult.BUILD_NOW : PollingResult.NO_CHANGES;
     }
 
@@ -104,7 +104,7 @@ public class JazzSCM extends SCM {
 
         @Override
         public String getDisplayName() {
-            return "Rational Team Concert";
+            return "RTC";
         }
 
         @Override
