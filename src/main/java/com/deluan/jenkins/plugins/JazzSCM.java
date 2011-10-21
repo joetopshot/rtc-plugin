@@ -69,13 +69,13 @@ public class JazzSCM extends SCM {
 
     @Override
     public SCMRevisionState calcRevisionsFromBuild(AbstractBuild<?, ?> build, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null; // This implementation is not necessary, as this information is obtained from the remote RTC's repository
     }
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
         JazzCLI cmd = new JazzCLI(launcher, listener, getDescriptor().getJazzExecutable(), username, password, repositoryLocation, streamName, workspaceName);
-        return (cmd.getChanges() != null) ? PollingResult.BUILD_NOW : PollingResult.NO_CHANGES;
+        return (cmd.getChanges() != null) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class JazzSCM extends SCM {
     }
 
     @Extension
-    public static class DescriptorImpl extends SCMDescriptor {
+    public static class DescriptorImpl extends SCMDescriptor<JazzSCM> {
         private String jazzExecutable;
 
         public DescriptorImpl() {
