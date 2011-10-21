@@ -49,16 +49,16 @@ public class JazzCLI {
 
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("compare");
-        args.add("ws", workspaceName);
-        args.add("stream", streamName);
-//        args.add("ws", "Negociacao Principal Workspace - Deluan");
 //        args.add("ws", workspaceName);
+//        args.add("stream", streamName);
+        args.add("ws", "Negociacao Principal Workspace - Deluan");
+        args.add("ws", workspaceName);
         args.add("-u", username);
         args.add("-P", password);
         args.add("-r", repositoryLocation);
         args.add("-I", "s");
-        args.add("-C", JazzChangeSet.CONTRIBUTOR_FORMAT);
-        args.add("-D", JazzChangeSet.DATE_FORMAT);
+        args.add("-C", '"' + JazzChangeSet.CONTRIBUTOR_FORMAT + '"');
+        args.add("-D", '"' + JazzChangeSet.DATE_FORMAT + '"');
 
         logger.log(Level.FINER, args.toStringWithQuote());
 
