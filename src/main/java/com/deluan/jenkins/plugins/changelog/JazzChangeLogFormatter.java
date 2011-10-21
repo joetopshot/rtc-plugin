@@ -22,7 +22,7 @@ public class JazzChangeLogFormatter {
             writer.println(String.format("\t<changeset rev=\"%s\">", changeSet.getRev()));
 //            writer.println(String.format("\t\t<date>%s</date>", Util.XS_DATETIME_FORMATTER.format(changeSet.getDate())));
             writer.println(String.format("\t\t<date>%s</date>", changeSet.getDate()));
-            writer.println(String.format("\t\t<author>%s</author>", changeSet.getAuthor()));
+            writer.println(String.format("\t\t<user>%s</user>", changeSet.getUser()));
             writer.println(String.format("\t\t<email>%s</email>", changeSet.getEmail()));
             writer.println(String.format("\t\t<msg>%s</msg>", Util.escape(changeSet.getMsg())));
 //            writer.println("\t\t<items>");

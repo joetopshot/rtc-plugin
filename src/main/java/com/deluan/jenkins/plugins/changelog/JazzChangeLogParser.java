@@ -28,7 +28,8 @@ public class JazzChangeLogParser extends ChangeLogParser {
         digester.addObjectCreate("*/changeset", JazzChangeSet.class);
         digester.addSetProperties("*/changeset");
         digester.addBeanPropertySetter("*/changeset/msg", "msgEscaped");
-        digester.addBeanPropertySetter("*/changeset/author");
+        digester.addBeanPropertySetter("*/changeset/user");
+        digester.addBeanPropertySetter("*/changeset/email");
         digester.addBeanPropertySetter("*/changeset/date");
         digester.addSetNext("*/changeset", "add");
 

@@ -17,7 +17,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     public static final String DATE_FORMAT = "|yyyy-MM-dd-HH:mm:ss|";
     public static final String CONTRIBUTOR_FORMAT = "|{name}|{email}|";
 
-    private String author;
+    private String user;
     private String email;
     private String date;
     private String rev;
@@ -34,7 +34,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
         String[] parts = line.split("\\|");
         this.rev = parts[0].trim().substring(1);
         this.rev = rev.substring(0, rev.length() - 1);
-        this.author = parts[1].trim();
+        this.user = parts[1].trim();
         this.email = parts[2];
         this.msg = Util.xmlEscape(parts[3].trim());
         this.date = parts[4].trim();
@@ -47,12 +47,17 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
 
     @Exported
     public User getAuthor() {
-        return User.get(author);
+        return User.get(user + " <" + email + ">");
     }
 
     @Exported
     public String getEmail() {
         return email;
+    }
+
+    @Exported
+    public String getUser() {
+        return user;
     }
 
     @Exported
@@ -76,12 +81,12 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
         super.setParent(parent);
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public void setDate(String date) {

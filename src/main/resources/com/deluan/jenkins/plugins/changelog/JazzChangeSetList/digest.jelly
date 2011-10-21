@@ -9,7 +9,7 @@
             <ol>
                 <j:forEach var="cs" items="${it.logs}" varStatus="loop">
                     <li>
-                        ${cs.msg} - ${cs.author}
+                        ${cs.msg} - ${cs.user}
                     </li>
                 </j:forEach>
             </ol>
