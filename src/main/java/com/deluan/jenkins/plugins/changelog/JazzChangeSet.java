@@ -78,8 +78,4 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     public void setMsg(String msg) {
         this.msg = msg;
     }
-
-    public void setMsgEscaped(String msgEscaped) {
-        this.msg = msgEscaped.replaceAll("&lt;", "<").replaceAll("&amp;", "&");
-    }
 }
