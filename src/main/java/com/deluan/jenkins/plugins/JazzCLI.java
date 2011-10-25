@@ -1,6 +1,5 @@
 package com.deluan.jenkins.plugins;
 
-import com.deluan.jenkins.plugins.changelog.JazzChangeSet;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -11,8 +10,6 @@ import hudson.util.ForkOutputStream;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,9 +70,13 @@ public class JazzCLI {
 
         logger.log(Level.FINER, args.toStringWithQuote());
 
-        String output = new String(popen(args).toByteArray());
-
-        return output.contains("    Entrada:"); //FIXME How to force english?!
+        ByteArrayOutputStream output = popen(args);
+        try {
+            String outputString = new String(output.toByteArray());
+            return outputString.contains("    Entrada:"); //FIXME How to force english?!
+        } finally {
+            output.close();
+        }
     }
 
     public boolean load() throws IOException, InterruptedException {
@@ -92,44 +93,48 @@ public class JazzCLI {
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
-    public boolean isLoaded() throws IOException, InterruptedException {
+    public boolean accept() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("status");
+        args.add("accept");
         addAuthInfo(args);
         args.add("-d");
         args.add(jobWorkspace);
-        args.add("-C", "-w", "-n");
+        args.add("--flow-components", "-o", "-v");
 
         logger.log(Level.FINER, args.toStringWithQuote());
 
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
-    public List<JazzChangeSet> getChanges() throws IOException, InterruptedException {
-        List<JazzChangeSet> result = new ArrayList<JazzChangeSet>();
-
+    public boolean isLoaded() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("compare");
-        args.add("ws", workspaceName);
-        args.add("stream", streamName);
-//        args.add("ws", "Negociacao Principal Workspace - Deluan");
-//        args.add("ws", workspaceName);
+        args.add("status");
         addAuthInfo(args);
-        args.add("-r", repositoryLocation);
-        args.add("-I", "s");
-        args.add("-C", '"' + JazzChangeSet.CONTRIBUTOR_FORMAT + '"');
-        args.add("-D", '"' + JazzChangeSet.DATE_FORMAT + '"');
+        args.add("-C", "-w", "-n");
+        args.add("-d");
+        args.add(jobWorkspace);
 
         logger.log(Level.FINER, args.toStringWithQuote());
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(popen(args).toByteArray())));
-        String line;
-        while ((line = in.readLine()) != null) {
-            result.add(new JazzChangeSet(line));
-        }
+        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
+    }
 
-        return result;
+    public boolean getChanges(File changeLog) throws IOException, InterruptedException {
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("status");
+        addAuthInfo(args);
+        args.add("-C", "-w", "-n");
+        args.add("-d");
+        args.add(jobWorkspace);
+
+        logger.log(Level.FINER, args.toStringWithQuote());
+
+        FileOutputStream fos = new FileOutputStream(changeLog);
+        try {
+            return (joinWithPossibleTimeout(run(args).stdout(fos), true, listener) == 0);
+        } finally {
+            fos.close();
+        }
     }
 
     private ArgumentListBuilder seed() {
@@ -150,7 +155,7 @@ public class JazzCLI {
     }
 
     private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {
-        return useTimeout ? proc.start().joinWithTimeout(60 * 60, TimeUnit.SECONDS, listener) : proc.join();
+        return useTimeout ? proc.start().joinWithTimeout(60 * 5, TimeUnit.SECONDS, listener) : proc.join();
     }
 
     /**

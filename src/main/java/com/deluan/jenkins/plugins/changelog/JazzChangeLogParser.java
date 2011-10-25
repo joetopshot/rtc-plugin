@@ -3,15 +3,16 @@ package com.deluan.jenkins.plugins.changelog;
 import hudson.model.AbstractBuild;
 import hudson.scm.ChangeLogParser;
 import hudson.scm.ChangeLogSet;
-import hudson.util.Digester2;
-import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * User: deluan
@@ -19,34 +20,59 @@ import java.util.List;
  */
 public class JazzChangeLogParser extends ChangeLogParser {
 
+
     @Override
     public ChangeLogSet<? extends ChangeLogSet.Entry> parse(AbstractBuild build, File changelogFile) throws IOException, SAXException {
         List<JazzChangeSet> changesetList = new ArrayList<JazzChangeSet>();
-        Digester digester = new Digester2();
-        digester.push(changesetList);
 
-        digester.addObjectCreate("*/changeset", JazzChangeSet.class);
-        digester.addSetProperties("*/changeset");
-        digester.addBeanPropertySetter("*/changeset/msg", "msgEscaped");
-        digester.addBeanPropertySetter("*/changeset/user");
-        digester.addBeanPropertySetter("*/changeset/email");
-        digester.addBeanPropertySetter("*/changeset/date");
-        digester.addSetNext("*/changeset", "add");
+        BufferedReader in = new BufferedReader(new FileReader(changelogFile));
 
+        try {
+            String lineRaw;
+            Boolean incoming = false;
+            JazzChangeSet changeSet = null;
+            Pattern startIncomingPattern = Pattern.compile("^\\s{4}Entrada:$"); // Incoming //FIXME How to force english?!
+            Pattern endIncomingPattern = Pattern.compile("^\\s{4}\\w*$");
+            Pattern startChangesetPattern = Pattern.compile("^\\s{8}\\((\\d+)\\)\\s*---[$]\\s*(\\D*)\\s+(.*)$");
+            Pattern filePattern = Pattern.compile("^\\s{12}(.{5})\\s(\\S*)\\s+(.*)$");
+            Pattern workItemPattern = Pattern.compile("^\\s{12}\\((\\d+)\\)\\s+(.*)$");
+            Matcher matcher = null;
 
-        // When digester reads a {{<items>}} child node of {{<changeset}} it will create a {{TeamFoundationChangeSet.Item}} object
-//        digester.addObjectCreate("*/changeset/items/item", JazzChangeSet.Item.class);
-//        digester.addSetProperties("*/changeset/items/item");
-//        digester.addBeanPropertySetter("*/changeset/items/item", "path");
-//        // The digested node/item is added to the change set through {{TeamFoundationChangeSet.add()}}
-//        digester.addSetNext("*/changeset/items/item", "add");
+            while ((lineRaw = in.readLine()) != null) {
+                String line = new String(lineRaw.getBytes(), "ISO-8859-1"); //TODO Fix char encoding
 
-        // Do the actual parsing
-        FileReader reader = new FileReader(changelogFile);
-        digester.parse(reader);
-        reader.close();
+                if (startIncomingPattern.matcher(line).matches()) {
+                    incoming = true;
+                } else if (endIncomingPattern.matcher(line).matches()) {
+                    incoming = false;
+                } else if (incoming) {
+                    if ((matcher = startChangesetPattern.matcher(line)).matches()) {
+                        if (changeSet != null) {
+                            changesetList.add(changeSet);
+                        }
+                        changeSet = new JazzChangeSet();
+                        changeSet.setRev(matcher.group(1));
+                        changeSet.setUser(matcher.group(2));
+                        changeSet.setMsg(matcher.group(3));
+                    } else if ((matcher = filePattern.matcher(line)).matches()) {
+                        // TODO
+                        // flags = matcher.group(1)
+                        // path = matcher.group(2)
+                        // movedFrom = matcher.group(3)
+                    } else if ((matcher = workItemPattern.matcher(line)).matches()) {
+                        // TODO
+                        // workItem = matcher.group(2)
+                    }
+                }
+            }
+
+            if (changeSet != null) {
+                changesetList.add(changeSet);
+            }
+        } finally {
+            in.close();
+        }
 
         return new JazzChangeSetList(build, changesetList);
     }
-
 }

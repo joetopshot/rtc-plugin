@@ -1,6 +1,5 @@
 package com.deluan.jenkins.plugins.changelog;
 
-import hudson.Util;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import org.kohsuke.stapler.export.Exported;
@@ -18,7 +17,6 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     public static final String CONTRIBUTOR_FORMAT = "|{name}|{email}|";
 
     private String user;
-    private String email;
     private String date;
     private String rev;
     private String msg;
@@ -29,17 +27,6 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     public JazzChangeSet() {
     }
 
-    public JazzChangeSet(String line) {
-        System.out.println(line);
-        String[] parts = line.split("\\|");
-        this.rev = parts[0].trim().substring(1);
-        this.rev = rev.substring(0, rev.length() - 1);
-        this.user = parts[1].trim();
-        this.email = parts[2];
-        this.msg = Util.xmlEscape(parts[3].trim());
-        this.date = parts[4].trim();
-    }
-
     @Exported
     public String getMsg() {
         return msg;
@@ -47,12 +34,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
 
     @Exported
     public User getAuthor() {
-        return User.get(user + " <" + email + ">");
-    }
-
-    @Exported
-    public String getEmail() {
-        return email;
+        return User.get(user);
     }
 
     @Exported
@@ -79,10 +61,6 @@ public final class JazzChangeSet extends ChangeLogSet.Entry {
     @Override
     protected void setParent(ChangeLogSet parent) {
         super.setParent(parent);
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setUser(String user) {
