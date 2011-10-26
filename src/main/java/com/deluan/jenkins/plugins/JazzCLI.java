@@ -106,19 +106,6 @@ public class JazzCLI {
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
-    public boolean isLoaded() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("status");
-        addAuthInfo(args);
-        args.add("-C", "-w", "-n");
-        args.add("-d");
-        args.add(jobWorkspace);
-
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
-    }
-
     public boolean getChanges(File changeLog) throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("status");
