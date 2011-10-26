@@ -68,8 +68,8 @@ public class JazzSCM extends SCM {
         return password;
     }
 
-    private JazzCLI getCliInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
-        return new JazzCLI(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(), getDescriptor().getJazzSandbox(),
+    private JazzClient getCliInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
+        return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(), getDescriptor().getJazzSandbox(),
                 username, password, repositoryLocation, streamName, workspaceName);
     }
 
@@ -80,9 +80,9 @@ public class JazzSCM extends SCM {
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        JazzCLI cmd = getCliInstance(launcher, listener, workspace);
+        JazzClient client = getCliInstance(launcher, listener, workspace);
         try {
-            return (cmd.hasChanges()) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
+            return (client.hasChanges()) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
         } catch (Exception e) {
             return PollingResult.BUILD_NOW;
         }
@@ -90,13 +90,13 @@ public class JazzSCM extends SCM {
 
     @Override
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
-        JazzCLI cmd = getCliInstance(launcher, listener, workspace);
+        JazzClient client = getCliInstance(launcher, listener, workspace);
 
-        if (cmd.getChanges(changelogFile)) {
-            return cmd.accept();
+        if (client.getChanges(changelogFile)) {
+            return client.accept();
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");
-            return cmd.load();
+            return client.load();
         }
     }
 

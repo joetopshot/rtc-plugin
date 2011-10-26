@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Deluan Quintao
  */
-public class JazzCLI {
+public class JazzClient {
     protected static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
 
     private final ArgumentListBuilder base;
@@ -34,9 +34,9 @@ public class JazzCLI {
     private String jazzSandbox;
 
 
-    public JazzCLI(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
-                   String jazzSandbox, String user, String password,
-                   String repositoryLocation, String streamName, String workspaceName) {
+    public JazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
+                      String jazzSandbox, String user, String password,
+                      String repositoryLocation, String streamName, String workspaceName) {
         base = new ArgumentListBuilder(jazzExecutable);
         this.jazzSandbox = jazzSandbox;
         this.launcher = launcher;
