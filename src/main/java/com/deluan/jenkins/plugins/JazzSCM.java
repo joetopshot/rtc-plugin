@@ -5,10 +5,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.TaskListener;
+import hudson.model.*;
 import hudson.scm.*;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
@@ -103,6 +100,12 @@ public class JazzSCM extends SCM {
     @Override
     public ChangeLogParser createChangeLogParser() {
         return new JazzChangeLogParser();
+    }
+
+    @Override
+    public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
+        // TODO How to obtain a Laucher, so I can call JazzClient.stopDamon()?
+        return super.processWorkspaceBeforeDeletion(project, workspace, node);
     }
 
     @Override
