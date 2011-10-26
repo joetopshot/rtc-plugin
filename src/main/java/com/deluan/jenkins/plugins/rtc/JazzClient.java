@@ -1,4 +1,4 @@
-package com.deluan.jenkins.plugins;
+package com.deluan.jenkins.plugins.rtc;
 
 import hudson.AbortException;
 import hudson.FilePath;

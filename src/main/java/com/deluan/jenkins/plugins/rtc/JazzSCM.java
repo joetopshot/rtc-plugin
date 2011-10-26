@@ -1,6 +1,6 @@
-package com.deluan.jenkins.plugins;
+package com.deluan.jenkins.plugins.rtc;
 
-import com.deluan.jenkins.plugins.changelog.JazzChangeLogParser;
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogParser;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -90,6 +90,11 @@ public class JazzSCM extends SCM {
         JazzClient client = getCliInstance(launcher, listener, workspace);
 
         if (client.getChanges(changelogFile)) {
+            /*
+            compare ws <-> stream
+            list (changesets from previous compare)
+            accept (changesets from previous compare)
+             */
             return client.accept();
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");

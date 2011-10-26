@@ -1,4 +1,4 @@
-package com.deluan.jenkins.plugins.changelog;
+package com.deluan.jenkins.plugins.rtc.changelog;
 
 import hudson.model.AbstractBuild;
 import hudson.scm.ChangeLogSet;
