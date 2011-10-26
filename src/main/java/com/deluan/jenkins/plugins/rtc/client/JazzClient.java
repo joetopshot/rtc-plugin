@@ -1,4 +1,4 @@
-package com.deluan.jenkins.plugins.rtc;
+package com.deluan.jenkins.plugins.rtc.client;
 
 import hudson.AbortException;
 import hudson.FilePath;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * @author Deluan Quintao
  */
 public class JazzClient {
-    protected static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
+    protected static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private final ArgumentListBuilder base;
     private final Launcher launcher;

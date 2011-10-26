@@ -1,6 +1,7 @@
 package com.deluan.jenkins.plugins.rtc;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogParser;
+import com.deluan.jenkins.plugins.rtc.client.JazzClient;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
