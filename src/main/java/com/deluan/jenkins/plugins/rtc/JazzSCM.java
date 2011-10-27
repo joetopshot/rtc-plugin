@@ -66,8 +66,8 @@ public class JazzSCM extends SCM {
         return password;
     }
 
-    private JazzClient getCliInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
-        return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(), getDescriptor().getJazzSandbox(),
+    private JazzClient getClientInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
+        return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(),
                 username, password, repositoryLocation, streamName, workspaceName);
     }
 
@@ -78,7 +78,7 @@ public class JazzSCM extends SCM {
 
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
-        JazzClient client = getCliInstance(launcher, listener, workspace);
+        JazzClient client = getClientInstance(launcher, listener, workspace);
         try {
             return (client.hasChanges()) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
         } catch (Exception e) {
@@ -88,15 +88,11 @@ public class JazzSCM extends SCM {
 
     @Override
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
-        JazzClient client = getCliInstance(launcher, listener, workspace);
+        JazzClient client = getClientInstance(launcher, listener, workspace);
 
-        if (client.getChanges(changelogFile)) {
-            /*
-            compare ws <-> stream
-            list (changesets from previous compare)
-            accept (changesets from previous compare)
-             */
-            return client.accept();
+        if (client.isLoaded()) {
+            client.getChanges(changelogFile);
+            return client.accept(); // TODO accept only the changesets detected
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");
             return client.load();
@@ -122,7 +118,6 @@ public class JazzSCM extends SCM {
     @Extension
     public static class DescriptorImpl extends SCMDescriptor<JazzSCM> {
         private String jazzExecutable;
-        private String jazzSandbox;
 
         public DescriptorImpl() {
             super(JazzSCM.class, null);
@@ -137,7 +132,6 @@ public class JazzSCM extends SCM {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
             jazzExecutable = Util.fixEmpty(req.getParameter("rtc.jazzExecutable").trim());
-            jazzSandbox = Util.fixEmpty(req.getParameter("rtc.jazzSandbox").trim());
             save();
             return true;
         }
@@ -148,10 +142,6 @@ public class JazzSCM extends SCM {
             } else {
                 return jazzExecutable;
             }
-        }
-
-        public String getJazzSandbox() {
-            return jazzSandbox;
         }
 
         public FormValidation doExecutableCheck(@QueryParameter String value) {
