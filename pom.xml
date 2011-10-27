@@ -5,16 +5,15 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>1.400</version>
-        <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
-    <artifactId>rtc-scm</artifactId>
+    <artifactId>rtc</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
-    <name>Jenkins RTC SCM plugin</name>
-    <description>Integrates Hudson/Jenkins to Rational Team Concert SCM</description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/RTC+SCM+Plugin</url>
+    <name>Jenkins RTC plugin</name>
+    <description>Integrates Hudson/Jenkins to Rational Team Concert</description>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/RTC+Plugin</url>
 
     <developers>
         <developer>
@@ -25,13 +24,13 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/deluan/rtc-scm-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:deluan/rtc-scm-plugin.git</developerConnection>
-        <url>https://github.com/deluan/rtc-scm-plugin</url>
+        <connection>scm:git:git://github.com/deluan/rtc-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:deluan/rtc-plugin.git</developerConnection>
+        <url>https://github.com/deluan/rtc-plugin</url>
     </scm>
 
     <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
