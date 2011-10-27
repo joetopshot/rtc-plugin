@@ -106,7 +106,7 @@ public class JazzSCM extends SCM {
 
     @Override
     public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
-        // TODO How to obtain a Laucher, so I can call JazzClient.stopDamon()?
+        // TODO How to obtain a Laucher, so I can call JazzClient.stopDaemon()?
         return super.processWorkspaceBeforeDeletion(project, workspace, node);
     }
 
