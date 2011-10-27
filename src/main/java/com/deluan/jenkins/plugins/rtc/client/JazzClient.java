@@ -187,8 +187,6 @@ public class JazzClient {
         args.add("compare");
         args.add("ws", workspaceName);
         args.add("stream", streamName);
-//        args.add("ws", "Negociacao Principal Workspace - Deluan");
-//        args.add("ws", workspaceName);
         addAuthInfo(args);
         args.add("-r", repositoryLocation);
         args.add("-I", "s");
@@ -260,16 +258,16 @@ public class JazzClient {
                     changeSet = new JazzChangeSet();
                     changeSet.setRev(matcher.group(1));
                 } else if ((matcher = filePattern.matcher(line)).matches()) {
-                    // TODO
                     assert changeSet != null;
                     String action = "edit";
+                    String path = matcher.group(3).replaceAll("\\\\", "/").trim();
                     String flag = matcher.group(1).substring(2);
                     if ("a".equals(flag)) {
                         action = "added";
                     } else if ("d".equals(flag)) {
                         action = "deleted";
                     }
-                    changeSet.addItem(matcher.group(3), action);
+                    changeSet.addItem(Util.xmlEscape(path), action);
                 } else if ((matcher = workItemPattern.matcher(line)).matches()) {
                     assert changeSet != null;
                     changeSet.addWorkItem(matcher.group(2));

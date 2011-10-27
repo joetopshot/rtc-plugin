@@ -86,7 +86,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
     }
 
     public void addItem(String path, String action) {
-        items.add(new Item(path.trim(), action.trim()));
+        items.add(new Item(path, action));
     }
 
     @Exported
