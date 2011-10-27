@@ -6,8 +6,5 @@
             <f:textbox name="rtc.jazzExecutable" value="${descriptor.jazzExecutable}"
                        checkUrl="'${rootURL}/scm/JazzSCM/executableCheck?value='+escape(this.value)"/>
         </f:entry>
-        <f:entry title="Jazz sandbox directory">
-            <f:textbox name="rtc.jazzSandbox" value="${descriptor.jazzSandbox}"/>
-        </f:entry>
     </f:section>
 </j:jelly>
