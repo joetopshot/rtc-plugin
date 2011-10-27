@@ -73,22 +73,9 @@ public class JazzClient {
     }
 
     public boolean hasChanges() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("status");
-        addAuthInfo(args);
-        args.add("-C", "-w", "-n");
-        args.add("-d");
-        args.add(jobWorkspace);
+        Map<String, JazzChangeSet> changes = compare();
 
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        ByteArrayOutputStream output = popen(args);
-        try {
-            String outputString = new String(output.toByteArray());
-            return outputString.contains("    Entrada:"); //FIXME How to force english?!
-        } finally {
-            output.close();
-        }
+        return !changes.isEmpty();
     }
 
     public boolean load() throws IOException, InterruptedException {
@@ -292,10 +279,6 @@ public class JazzClient {
     private ProcStarter l(ArgumentListBuilder args) {
         // set the default stdout
         return launcher.launch().cmds(args).stdout(listener);
-    }
-
-    private ProcStarter run(String... args) {
-        return l(seed().add(args));
     }
 
     private ProcStarter run(ArgumentListBuilder args) {
