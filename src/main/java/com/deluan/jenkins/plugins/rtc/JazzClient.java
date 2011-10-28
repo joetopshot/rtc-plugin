@@ -14,9 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -106,6 +104,10 @@ public class JazzClient {
     }
 
     public boolean accept() throws IOException, InterruptedException {
+        return accept(null);
+    }
+
+    public boolean accept(Collection<JazzChangeSet> changes) throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("accept");
         addAuthInfo(args);
@@ -113,18 +115,23 @@ public class JazzClient {
         args.add(jobWorkspace);
         args.add("--flow-components", "-o", "-v");
 
+        if (changes != null && !changes.isEmpty()) {
+            args.add("-c");
+            for (JazzChangeSet changeSet : changes) {
+                args.add(changeSet.getRev());
+            }
+        }
+
         logger.log(Level.FINER, args.toStringWithQuote());
 
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
-    public void getChanges(File changeLog) throws IOException, InterruptedException {
-        Map<String, JazzChangeSet> compareCmdResults;
-        Map<String, JazzChangeSet> listCmdResults;
+    public List<JazzChangeSet> getChanges(File changeLog) throws IOException, InterruptedException {
+        Map<String, JazzChangeSet> compareCmdResults = compare();
 
-        compareCmdResults = compare();
         if (!compareCmdResults.isEmpty()) {
-            listCmdResults = list(compareCmdResults.keySet());
+            Map<String, JazzChangeSet> listCmdResults = list(compareCmdResults.keySet());
 
             for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
                 JazzChangeSet changeSet1 = entry.getValue();
@@ -133,6 +140,8 @@ public class JazzClient {
             }
             format(compareCmdResults.values(), changeLog);
         }
+
+        return new ArrayList<JazzChangeSet>(compareCmdResults.values());
     }
 
     private void format(Collection<JazzChangeSet> changeSetList, File changelogFile) throws IOException {

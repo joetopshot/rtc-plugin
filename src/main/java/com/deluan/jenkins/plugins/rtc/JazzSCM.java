@@ -1,6 +1,7 @@
 package com.deluan.jenkins.plugins.rtc;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogParser;
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -15,16 +16,14 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
  * User: deluan
  * Date: 19/10/11
  */
+@SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {
-
-    protected static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
 
     private String repositoryLocation;
     private String workspaceName;
@@ -35,8 +34,6 @@ public class JazzSCM extends SCM {
     @DataBoundConstructor
     public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
                    String username, String password) {
-
-        logger.log(Level.FINER, "In JazzSCM constructor");
 
         this.repositoryLocation = repositoryLocation;
         this.workspaceName = workspaceName;
@@ -81,7 +78,7 @@ public class JazzSCM extends SCM {
         try {
             return (client.hasChanges()) ? PollingResult.SIGNIFICANT : PollingResult.NO_CHANGES;
         } catch (Exception e) {
-            return PollingResult.BUILD_NOW;
+            return PollingResult.NO_CHANGES;
         }
     }
 
@@ -89,12 +86,16 @@ public class JazzSCM extends SCM {
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
         JazzClient client = getClientInstance(launcher, listener, workspace);
 
-        if (client.isLoaded()) {
-            client.getChanges(changelogFile);
-            return client.accept(); // TODO accept only the changesets detected
+        // Forces a load of the workspace. If it's already loaded, scm do nothing.
+        client.load();
+
+        List<JazzChangeSet> changes = client.getChanges(changelogFile);
+        if (!changes.isEmpty()) {
+            // TODO ChangeSetWriter.write(changes) here and not inside getChanges
+            return client.accept(changes);
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");
-            return client.load();
+            return true;
         }
     }
 
