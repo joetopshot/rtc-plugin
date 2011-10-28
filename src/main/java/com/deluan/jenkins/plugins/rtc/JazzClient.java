@@ -167,7 +167,6 @@ public class JazzClient {
             String line;
             while ((line = in.readLine()) != null) {
                 JazzChangeSet changeSet = new JazzChangeSet();
-                System.out.println(line);
                 String[] parts = line.split("\\|");
                 String rev = parts[0].trim().substring(1);
                 rev = rev.substring(0, rev.length() - 1);
