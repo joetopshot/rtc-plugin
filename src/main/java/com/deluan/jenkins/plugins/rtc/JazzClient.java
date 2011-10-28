@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 public class JazzClient {
     protected static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
+    private static final int TIMEOUT = 60 * 5; // in seconds
     private static final String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
     private static final String CONTRIBUTOR_FORMAT = "|{name}|{email}|";
     private final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
@@ -263,7 +264,7 @@ public class JazzClient {
     }
 
     private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {
-        return useTimeout ? proc.start().joinWithTimeout(60 * 5, TimeUnit.SECONDS, listener) : proc.join();
+        return useTimeout ? proc.start().joinWithTimeout(TIMEOUT, TimeUnit.SECONDS, listener) : proc.join();
     }
 
     /**
