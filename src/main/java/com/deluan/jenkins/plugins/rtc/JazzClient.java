@@ -127,7 +127,7 @@ public class JazzClient {
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
     }
 
-    public List<JazzChangeSet> getChanges(File changeLog) throws IOException, InterruptedException {
+    public List<JazzChangeSet> getChanges() throws IOException, InterruptedException {
         Map<String, JazzChangeSet> compareCmdResults = compare();
 
         if (!compareCmdResults.isEmpty()) {
@@ -138,42 +138,9 @@ public class JazzClient {
                 JazzChangeSet changeSet2 = listCmdResults.get(entry.getKey());
                 changeSet1.copyItemsFrom(changeSet2);
             }
-            format(compareCmdResults.values(), changeLog);
         }
 
         return new ArrayList<JazzChangeSet>(compareCmdResults.values());
-    }
-
-    private void format(Collection<JazzChangeSet> changeSetList, File changelogFile) throws IOException {
-        PrintWriter writer = new PrintWriter(new FileWriter(changelogFile));
-        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.println("<changelog>");
-        for (JazzChangeSet changeSet : changeSetList) {
-            writer.println(String.format("\t<changeset rev=\"%s\">", changeSet.getRev()));
-            writer.println(String.format("\t\t<date>%s</date>", changeSet.getDateStr()));
-            writer.println(String.format("\t\t<user>%s</user>", changeSet.getUser()));
-            writer.println(String.format("\t\t<email>%s</email>", changeSet.getEmail()));
-            writer.println(String.format("\t\t<comment>%s</comment>", changeSet.getMsg()));
-
-            if (!changeSet.getItems().isEmpty()) {
-                writer.println("\t\t<files>");
-                for (JazzChangeSet.Item item : changeSet.getItems()) {
-                    writer.println(String.format("\t\t\t<file action=\"%s\">%s</file>", item.getAction(), item.getPath()));
-                }
-                writer.println("\t\t</files>");
-            }
-
-            if (!changeSet.getWorkItems().isEmpty()) {
-                writer.println("\t\t<workitems>");
-                for (String workItem : changeSet.getWorkItems()) {
-                    writer.println(String.format("\t\t\t<workitem>%s</workitem>", workItem));
-                }
-                writer.println("\t\t</workitems>");
-            }
-            writer.println("\t</changeset>");
-        }
-        writer.println("</changelog>");
-        writer.close();
     }
 
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {

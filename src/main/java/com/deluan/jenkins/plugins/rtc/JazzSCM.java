@@ -1,6 +1,7 @@
 package com.deluan.jenkins.plugins.rtc;
 
-import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogParser;
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogReader;
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeLogWriter;
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.Extension;
 import hudson.FilePath;
@@ -89,10 +90,17 @@ public class JazzSCM extends SCM {
         // Forces a load of the workspace. If it's already loaded, scm do nothing.
         client.load();
 
-        List<JazzChangeSet> changes = client.getChanges(changelogFile);
+        List<JazzChangeSet> changes = client.getChanges();
         if (!changes.isEmpty()) {
-            // TODO ChangeSetWriter.write(changes) here and not inside getChanges
-            return client.accept(changes);
+            JazzChangeLogWriter writer = new JazzChangeLogWriter();
+
+            boolean success = client.accept(changes);
+            if (success) {
+                writer.write(changes, changelogFile);
+            } else {
+                createEmptyChangeLog(changelogFile, listener, "changelog");
+            }
+            return success;
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");
             return true;
@@ -101,7 +109,7 @@ public class JazzSCM extends SCM {
 
     @Override
     public ChangeLogParser createChangeLogParser() {
-        return new JazzChangeLogParser();
+        return new JazzChangeLogReader();
     }
 
     @Override

@@ -17,7 +17,7 @@ import java.util.List;
  * User: deluan
  * Date: 21/10/11
  */
-public class JazzChangeLogParser extends ChangeLogParser {
+public class JazzChangeLogReader extends ChangeLogParser {
 
 
     @Override
