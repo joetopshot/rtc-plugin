@@ -1,4 +1,4 @@
-package com.deluan.jenkins.plugins.rtc.client;
+package com.deluan.jenkins.plugins.rtc;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.AbortException;
