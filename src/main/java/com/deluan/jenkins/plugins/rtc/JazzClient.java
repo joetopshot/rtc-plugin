@@ -5,11 +5,12 @@ import hudson.AbortException;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
-import hudson.Util;
+import hudson.model.Computer;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.ForkOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.framework.io.WriterOutputStream;
 
 import java.io.*;
 import java.text.ParseException;
@@ -171,7 +172,7 @@ public class JazzClient {
                 changeSet.setRev(rev);
                 changeSet.setUser(parts[1].trim());
                 changeSet.setEmail(parts[2].trim());
-                changeSet.setMsg(Util.xmlEscape(parts[3].trim()));
+                changeSet.setMsg(parts[3].trim());
                 try {
                     changeSet.setDate(sdf.parse(parts[4].trim()));
                 } catch (ParseException e) {
@@ -230,7 +231,7 @@ public class JazzClient {
                     } else if ("d".equals(flag)) {
                         action = "deleted";
                     }
-                    changeSet.addItem(Util.xmlEscape(path), action);
+                    changeSet.addItem(path, action);
                 } else if ((matcher = workItemPattern.matcher(line)).matches()) {
                     assert changeSet != null;
                     changeSet.addWorkItem(matcher.group(2));
@@ -271,10 +272,15 @@ public class JazzClient {
     private ByteArrayOutputStream popen(ArgumentListBuilder args)
             throws IOException, InterruptedException {
 
-        PrintStream output = listener.getLogger();
+        // scm produces text in the platform default encoding, so we need to convert it back to UTF-8
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ForkOutputStream fos = new ForkOutputStream(baos, output);
+        WriterOutputStream o = new WriterOutputStream(new OutputStreamWriter(baos, "UTF-8"),
+                Computer.currentComputer().getDefaultCharset());
+
+        PrintStream output = listener.getLogger();
+        ForkOutputStream fos = new ForkOutputStream(o, output);
         if (joinWithPossibleTimeout(run(args).stdout(fos), true, listener) == 0) {
+            o.flush();
             return baos;
         } else {
             listener.error("Failed to run " + args.toStringWithQuote());
