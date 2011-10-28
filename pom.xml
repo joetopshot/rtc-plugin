@@ -14,12 +14,19 @@
     <name>Jenkins RTC plugin</name>
     <description>Integrates Hudson/Jenkins to Rational Team Concert</description>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/RTC+Plugin</url>
+    <licenses>
+        <license>
+            <name>MIT license</name>
+            <comments>All source code is under the MIT license.</comments>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
             <id>deluan</id>
             <name>Deluan Quintao</name>
-            <email>deluan@deluan.com</email>
+            <url>https://github.com/deluan</url>
+            <timezone>-3</timezone>
         </developer>
     </developers>
 
