@@ -7,6 +7,7 @@ import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.model.Computer;
 import hudson.model.TaskListener;
+import hudson.scm.EditType;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.ForkOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -224,13 +225,16 @@ public class JazzClient {
                     changeSet.setRev(matcher.group(1));
                 } else if ((matcher = filePattern.matcher(line)).matches()) {
                     assert changeSet != null;
-                    String action = "edit";
                     String path = matcher.group(3).replaceAll("\\\\", "/").trim();
-                    String flag = matcher.group(1).substring(2);
+                    if (path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
+                    String action = EditType.EDIT.getName();
+                    String flag = matcher.group(1).substring(2, 3);
                     if ("a".equals(flag)) {
-                        action = "added";
+                        action = EditType.ADD.getName();
                     } else if ("d".equals(flag)) {
-                        action = "deleted";
+                        action = EditType.DELETE.getName();
                     }
                     changeSet.addItem(path, action);
                 } else if ((matcher = workItemPattern.matcher(line)).matches()) {

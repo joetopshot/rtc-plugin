@@ -183,10 +183,10 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
 
         @Exported
         public EditType getEditType() {
-            if (action.equalsIgnoreCase("delete")) {
+            if (action.equalsIgnoreCase(EditType.DELETE.getName())) {
                 return EditType.DELETE;
             }
-            if (action.equalsIgnoreCase("add")) {
+            if (action.equalsIgnoreCase(EditType.ADD.getName())) {
                 return EditType.ADD;
             }
             return EditType.EDIT;
