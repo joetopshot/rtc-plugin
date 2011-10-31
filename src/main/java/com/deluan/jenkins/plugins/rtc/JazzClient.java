@@ -29,7 +29,9 @@ import java.util.regex.Pattern;
  * @author Deluan Quintao
  */
 public class JazzClient {
-    protected static final Logger logger = Logger.getLogger(JazzClient.class.getName());
+    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
+
+    private static final String DAEMON_SCM_CMD = "scm";
 
     private static final int TIMEOUT = 60 * 5; // in seconds
     private static final String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
@@ -91,6 +93,15 @@ public class JazzClient {
         logger.log(Level.FINER, args.toStringWithQuote());
 
         return (joinWithPossibleTimeout(run(args), true, listener) == 0);
+    }
+
+    public boolean stopDaemon() throws IOException, InterruptedException {
+        ArgumentListBuilder args = new ArgumentListBuilder(DAEMON_SCM_CMD);
+        args.add("daemon");
+        args.add("stop");
+        args.add(jobWorkspace);
+
+        return (joinWithPossibleTimeout(l(args), true, listener) == 0);
     }
 
     public boolean isLoaded() throws IOException, InterruptedException {
@@ -291,6 +302,5 @@ public class JazzClient {
             throw new AbortException();
         }
     }
-
 
 }

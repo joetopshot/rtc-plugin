@@ -10,6 +10,7 @@ import hudson.Util;
 import hudson.model.*;
 import hudson.scm.*;
 import hudson.util.FormValidation;
+import hudson.util.LogTaskListener;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -18,6 +19,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: deluan
@@ -25,6 +28,8 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {
+
+    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private String repositoryLocation;
     private String workspaceName;
@@ -114,8 +119,14 @@ public class JazzSCM extends SCM {
 
     @Override
     public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
-        // TODO How to obtain a Laucher, so I can call JazzClient.stopDaemon()?
-        return super.processWorkspaceBeforeDeletion(project, workspace, node);
+        LogTaskListener listener = new LogTaskListener(logger, Level.INFO);
+        Launcher launcher = node.createLauncher(listener);
+
+        // Stop any daemon started for the workspace
+        JazzClient client = getClientInstance(launcher, listener, workspace);
+        client.stopDaemon();
+
+        return true;
     }
 
     @Override
