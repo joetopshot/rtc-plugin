@@ -15,4 +15,6 @@
     <f:entry title="${%Build user's password}" field="password">
         <f:textbox/>
     </f:entry>
+
+    <t:listScmBrowsers name="rtc.browser"/>
 </j:jelly>

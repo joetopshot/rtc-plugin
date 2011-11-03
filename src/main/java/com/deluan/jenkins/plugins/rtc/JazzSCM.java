@@ -37,6 +37,8 @@ public class JazzSCM extends SCM {
     private String username;
     private String password;
 
+    private JazzRepositoryBrowser repositoryBrowser;
+
     @DataBoundConstructor
     public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
                    String username, String password) {
@@ -119,6 +121,11 @@ public class JazzSCM extends SCM {
     }
 
     @Override
+    public JazzRepositoryBrowser getBrowser() {
+        return repositoryBrowser;
+    }
+
+    @Override
     public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
         LogTaskListener listener = new LogTaskListener(logger, Level.INFO);
         Launcher launcher = node.createLauncher(listener);
@@ -140,13 +147,24 @@ public class JazzSCM extends SCM {
         private String jazzExecutable;
 
         public DescriptorImpl() {
-            super(JazzSCM.class, null);
+            super(JazzSCM.class, JazzRepositoryBrowser.class);
             load();
         }
 
         @Override
         public String getDisplayName() {
             return "RTC";
+        }
+
+        @Override
+        public SCM newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            JazzSCM scm = (JazzSCM) super.newInstance(req, formData);
+            scm.repositoryBrowser = RepositoryBrowsers.createInstance(
+                    JazzRepositoryBrowser.class,
+                    req,
+                    formData,
+                    "browser");
+            return scm;
         }
 
         @Override
