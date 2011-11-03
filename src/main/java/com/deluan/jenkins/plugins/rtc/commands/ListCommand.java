@@ -32,8 +32,7 @@ public class ListCommand extends AbstractCommand implements ParseableCommand<Map
         args.add("list");
         args.add("changesets");
         addLoginArgument(args);
-        args.add("-d");
-        args.add(getConfig().getJobWorkspace());
+        addLocalWorkspaceArgument(args);
         for (String changeSet : this.changeSets) {
             args.add(changeSet);
         }

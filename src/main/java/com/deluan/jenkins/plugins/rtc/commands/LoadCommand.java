@@ -17,10 +17,10 @@ public class LoadCommand extends AbstractCommand {
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("load", getConfig().getWorkspaceName());
         addLoginArgument(args);
-        args.add("-r", getConfig().getRepositoryLocation());
-        args.add("-d");
-        args.add(getConfig().getJobWorkspace());
+        addRepositoryArgument(args);
+        addLocalWorkspaceArgument(args);
         args.add("-f");
         return args;
     }
+
 }

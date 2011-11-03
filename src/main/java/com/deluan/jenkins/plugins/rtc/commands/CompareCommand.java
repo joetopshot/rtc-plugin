@@ -34,7 +34,7 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
         args.add("ws", getConfig().getWorkspaceName());
         args.add("stream", getConfig().getStreamName());
         addLoginArgument(args);
-        args.add("-r", getConfig().getRepositoryLocation());
+        addRepositoryArgument(args);
         args.add("-I", "s");
         args.add("-C", '"' + CONTRIBUTOR_FORMAT + '"');
         args.add("-D", "\"|" + DATE_FORMAT + "|\"");

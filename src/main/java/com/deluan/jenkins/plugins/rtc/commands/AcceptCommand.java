@@ -31,8 +31,7 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
 
         args.add("accept");
         addLoginArgument(args);
-        args.add("-d");
-        args.add(getConfig().getJobWorkspace());
+        addLocalWorkspaceArgument(args);
         args.add("--flow-components", "-o", "-v");
         if (changeSets != null && !changeSets.isEmpty()) {
             args.add("-c");

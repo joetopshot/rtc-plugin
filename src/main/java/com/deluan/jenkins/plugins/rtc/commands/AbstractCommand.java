@@ -22,6 +22,15 @@ public abstract class AbstractCommand implements Command {
         return arguments;
     }
 
+    protected ArgumentListBuilder addRepositoryArgument(ArgumentListBuilder args) {
+        return args.add("-r", getConfig().getRepositoryLocation());
+    }
+
+    protected ArgumentListBuilder addLocalWorkspaceArgument(ArgumentListBuilder args) {
+        args.add("-d");
+        return args.add(getConfig().getJobWorkspace());
+    }
+
     public JazzConfigurationProvider getConfig() {
         return config;
     }
