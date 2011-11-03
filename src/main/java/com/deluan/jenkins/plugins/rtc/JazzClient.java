@@ -1,42 +1,33 @@
 package com.deluan.jenkins.plugins.rtc;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
+import com.deluan.jenkins.plugins.rtc.commands.*;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.model.Computer;
 import hudson.model.TaskListener;
-import hudson.scm.EditType;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.ForkOutputStream;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.framework.io.WriterOutputStream;
 
 import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Encapsulates the invocation of RTC's SCM Command Line Interface, "scm".
  *
  * @author Deluan Quintao
  */
-public class JazzClient {
+public class JazzClient implements JazzConfigurationProvider {
     private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private static final String DAEMON_SCM_CMD = "scm";
 
     private static final int TIMEOUT = 60 * 5; // in seconds
-    private static final String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
-    private static final String CONTRIBUTOR_FORMAT = "|{name}|{email}|";
-    private final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 
 
     private final ArgumentListBuilder base;
@@ -64,88 +55,66 @@ public class JazzClient {
         this.jobWorkspace = jobWorkspace;
     }
 
-    private ArgumentListBuilder addAuthInfo(ArgumentListBuilder args) {
-        if (StringUtils.isNotBlank(username)) {
-            args.add("-u", username);
-        }
-        if (StringUtils.isNotBlank(password)) {
-            args.add("-P", password);
-        }
-
-        return args;
-    }
-
+    /**
+     * Returns true if there is any incoming changes to be accepted.
+     *
+     * @return <tt>true</tt> if any changes are found
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public boolean hasChanges() throws IOException, InterruptedException {
         Map<String, JazzChangeSet> changes = compare();
 
         return !changes.isEmpty();
     }
 
+    /**
+     * Call <tt>scm load</tt> command. <p/>
+     * <p/>
+     * Will load the workspace using the parameters defined.
+     *
+     * @return <tt>true</tt> on success
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public boolean load() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("load", workspaceName);
-        addAuthInfo(args);
-        args.add("-r", repositoryLocation);
-        args.add("-d");
-        args.add(jobWorkspace);
-        args.add("-f");
+        Command cmd = new LoadCommand(this);
 
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
+        return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
     }
 
+    /**
+     * Call <tt>scm daemon stop</tt> command. <p/>
+     * <p/>
+     * Will try to stop any daemon associated with the workspace.
+     * <p/>
+     * This will be executed with the <tt>scm</tt> command, as the <tt>lscm</tt> command
+     * does not support this operation.
+     *
+     * @return <tt>true</tt> on success
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public boolean stopDaemon() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder(DAEMON_SCM_CMD);
-        args.add("daemon");
-        args.add("stop");
-        args.add(jobWorkspace);
+
+        args.add(new StopDaemonCommand(this).getArguments());
 
         return (joinWithPossibleTimeout(l(args), true, listener) == 0);
     }
 
-    public boolean isLoaded() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("history");
-        addAuthInfo(args);
-        args.add("-m", "1");
-        args.add("-d");
-        args.add(jobWorkspace);
-
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
-    }
-
-    public boolean accept() throws IOException, InterruptedException {
-        return accept(null);
-    }
-
-    public boolean accept(Collection<JazzChangeSet> changes) throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("accept");
-        addAuthInfo(args);
-        args.add("-d");
-        args.add(jobWorkspace);
-        args.add("--flow-components", "-o", "-v");
-
-        if (changes != null && !changes.isEmpty()) {
-            args.add("-c");
-            for (JazzChangeSet changeSet : changes) {
-                args.add(changeSet.getRev());
-            }
-        }
-
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        return (joinWithPossibleTimeout(run(args), true, listener) == 0);
-    }
-
-    public List<JazzChangeSet> getChanges() throws IOException, InterruptedException {
+    /**
+     * Call <tt>scm accept</tt> command.<p/>
+     *
+     * @return all changeSets accepted, complete with affected paths and related work itens
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public List<JazzChangeSet> accept() throws IOException, InterruptedException {
         Map<String, JazzChangeSet> compareCmdResults = compare();
 
         if (!compareCmdResults.isEmpty()) {
-            Map<String, JazzChangeSet> listCmdResults = list(compareCmdResults.keySet());
+            Map<String, JazzChangeSet> listCmdResults = accept(compareCmdResults.keySet());
 
             for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
                 JazzChangeSet changeSet1 = entry.getValue();
@@ -157,112 +126,42 @@ public class JazzClient {
         return new ArrayList<JazzChangeSet>(compareCmdResults.values());
     }
 
+    private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
+
+        AcceptCommand cmd = new AcceptCommand(this, changeSets);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(popen(cmd.getArguments()).toByteArray())));
+        Map<String, JazzChangeSet> result = Collections.emptyMap();
+
+        try {
+            result = cmd.parse(in);
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            in.close();
+        }
+
+        return result;
+    }
+
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
-        Map<String, JazzChangeSet> result = new HashMap<String, JazzChangeSet>();
-
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("compare");
-        args.add("ws", workspaceName);
-        args.add("stream", streamName);
-        addAuthInfo(args);
-        args.add("-r", repositoryLocation);
-        args.add("-I", "s");
-        args.add("-C", '"' + CONTRIBUTOR_FORMAT + '"');
-        args.add("-D", "\"|" + DATE_FORMAT + "|\"");
-
-        logger.log(Level.FINER, args.toStringWithQuote());
+        CompareCommand cmd = new CompareCommand(this);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(popen(args).toByteArray())));
+                new ByteArrayInputStream(popen(cmd.getArguments()).toByteArray())));
+        Map<String, JazzChangeSet> result = Collections.emptyMap();
+
         try {
-            String line;
-            while ((line = in.readLine()) != null) {
-                JazzChangeSet changeSet = new JazzChangeSet();
-                String[] parts = line.split("\\|");
-                String rev = parts[0].trim().substring(1);
-                rev = rev.substring(0, rev.length() - 1);
-                changeSet.setRev(rev);
-                changeSet.setUser(parts[1].trim());
-                changeSet.setEmail(parts[2].trim());
-                changeSet.setMsg(parts[3].trim());
-                try {
-                    changeSet.setDate(sdf.parse(parts[4].trim()));
-                } catch (ParseException e) {
-                    logger.log(Level.WARNING, "Error parsing date '" + parts[4].trim() + "' for revision (" + rev + ")");
-                }
-                result.put(rev, changeSet);
-            }
+            result = cmd.parse(in);
+        } catch (Exception e) {
+            throw new IOException(e);
         } finally {
             in.close();
         }
 
         return result;
     }
-
-    private Map<String, JazzChangeSet> list(Collection<String> changeSets) throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("list");
-        args.add("changesets");
-        addAuthInfo(args);
-        args.add("-d");
-        args.add(jobWorkspace);
-        for (String changeSet : changeSets) {
-            args.add(changeSet);
-        }
-
-        logger.log(Level.FINER, args.toStringWithQuote());
-
-        Map<String, JazzChangeSet> result = new HashMap<String, JazzChangeSet>();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(popen(args).toByteArray())));
-
-        try {
-            String line;
-            JazzChangeSet changeSet = null;
-            Pattern startChangesetPattern = Pattern.compile("^\\s{2}\\((\\d+)\\)\\s*---[$]\\s*(\\D*)\\s+(.*)$");
-            Pattern filePattern = Pattern.compile("^\\s{6}(.{5})\\s(\\S*)\\s+(.*)$");
-            Pattern workItemPattern = Pattern.compile("^\\s{6}\\((\\d+)\\)\\s+(.*)$");
-            Matcher matcher;
-
-            while ((line = in.readLine()) != null) {
-
-                if ((matcher = startChangesetPattern.matcher(line)).matches()) {
-                    if (changeSet != null) {
-                        result.put(changeSet.getRev(), changeSet);
-                    }
-                    changeSet = new JazzChangeSet();
-                    changeSet.setRev(matcher.group(1));
-                } else if ((matcher = filePattern.matcher(line)).matches()) {
-                    assert changeSet != null;
-                    String path = matcher.group(3).replaceAll("\\\\", "/").trim();
-                    if (path.startsWith("/")) {
-                        path = path.substring(1);
-                    }
-                    String action = EditType.EDIT.getName();
-                    String flag = matcher.group(1).substring(2, 3);
-                    if ("a".equals(flag)) {
-                        action = EditType.ADD.getName();
-                    } else if ("d".equals(flag)) {
-                        action = EditType.DELETE.getName();
-                    }
-                    changeSet.addItem(path, action);
-                } else if ((matcher = workItemPattern.matcher(line)).matches()) {
-                    assert changeSet != null;
-                    changeSet.addWorkItem(matcher.group(2));
-                }
-            }
-
-            if (changeSet != null) {
-                result.put(changeSet.getRev(), changeSet);
-            }
-        } finally {
-            in.close();
-        }
-
-        return result;
-    }
-
 
     private ArgumentListBuilder seed() {
         return base.clone();
@@ -301,6 +200,30 @@ public class JazzClient {
             listener.error("Failed to run " + args.toStringWithQuote());
             throw new AbortException();
         }
+    }
+
+    public String getRepositoryLocation() {
+        return repositoryLocation;
+    }
+
+    public String getWorkspaceName() {
+        return workspaceName;
+    }
+
+    public String getStreamName() {
+        return streamName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getJobWorkspace() {
+        return jobWorkspace.toString();
     }
 
 }

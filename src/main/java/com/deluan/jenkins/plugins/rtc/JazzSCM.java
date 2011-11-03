@@ -92,24 +92,25 @@ public class JazzSCM extends SCM {
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
         JazzClient client = getClientInstance(launcher, listener, workspace);
 
-        // Forces a load of the workspace. If it's already loaded, scm do nothing.
+        // Forces a load of the workspace. If it's already loaded, the scm command will do nothing.
         client.load();
 
-        List<JazzChangeSet> changes = client.getChanges();
+        // Accepts all incoming changes
+        List<JazzChangeSet> changes;
+        try {
+            changes = client.accept();
+        } catch (IOException e) {
+            return false;
+        }
+
         if (!changes.isEmpty()) {
             JazzChangeLogWriter writer = new JazzChangeLogWriter();
-
-            boolean success = client.accept(changes);
-            if (success) {
-                writer.write(changes, changelogFile);
-            } else {
-                createEmptyChangeLog(changelogFile, listener, "changelog");
-            }
-            return success;
+            writer.write(changes, changelogFile);
         } else {
             createEmptyChangeLog(changelogFile, listener, "changelog");
-            return true;
         }
+
+        return true;
     }
 
     @Override
