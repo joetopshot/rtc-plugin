@@ -158,7 +158,7 @@ public class JazzSCM extends SCM {
 
         public String getJazzExecutable() {
             if (jazzExecutable == null) {
-                return "scm";
+                return JazzClient.SCM_CMD;
             } else {
                 return jazzExecutable;
             }

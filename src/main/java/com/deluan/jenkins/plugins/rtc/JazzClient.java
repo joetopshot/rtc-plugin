@@ -23,9 +23,9 @@ import java.util.logging.Logger;
  * @author Deluan Quintao
  */
 public class JazzClient implements JazzConfigurationProvider {
-    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
+    public static final String SCM_CMD = "scm";
 
-    private static final String DAEMON_SCM_CMD = "scm";
+    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private static final int TIMEOUT = 60 * 5; // in seconds
 
@@ -96,7 +96,7 @@ public class JazzClient implements JazzConfigurationProvider {
      * @throws InterruptedException
      */
     public boolean stopDaemon() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder(DAEMON_SCM_CMD);
+        ArgumentListBuilder args = new ArgumentListBuilder(SCM_CMD);
 
         args.add(new StopDaemonCommand(this).getArguments().toCommandArray());
 
