@@ -1,5 +1,7 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import hudson.FilePath;
+
 public interface JazzConfigurationProvider {
 
     public String getRepositoryLocation();
@@ -12,7 +14,7 @@ public interface JazzConfigurationProvider {
 
     public String getPassword();
 
-    public String getJobWorkspace();
+    public FilePath getJobWorkspace();
 
 
 }

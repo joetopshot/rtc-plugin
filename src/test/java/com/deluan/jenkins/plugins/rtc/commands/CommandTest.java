@@ -1,11 +1,13 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
+import hudson.FilePath;
 import hudson.scm.EditType;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -27,7 +29,7 @@ public class CommandTest {
         when(config.getStreamName()).thenReturn("My Stream");
         when(config.getUsername()).thenReturn("user");
         when(config.getPassword()).thenReturn("password");
-        when(config.getJobWorkspace()).thenReturn("c:\\test");
+        when(config.getJobWorkspace()).thenReturn(new FilePath(new File("c:\\test")));
     }
 
     @Test

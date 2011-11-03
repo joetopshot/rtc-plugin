@@ -222,8 +222,8 @@ public class JazzClient implements JazzConfigurationProvider {
         return password;
     }
 
-    public String getJobWorkspace() {
-        return jobWorkspace.toString();
+    public FilePath getJobWorkspace() {
+        return jobWorkspace;
     }
 
 }
