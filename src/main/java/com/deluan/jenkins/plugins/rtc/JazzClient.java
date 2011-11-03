@@ -98,7 +98,7 @@ public class JazzClient implements JazzConfigurationProvider {
     public boolean stopDaemon() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder(DAEMON_SCM_CMD);
 
-        args.add(new StopDaemonCommand(this).getArguments());
+        args.add(new StopDaemonCommand(this).getArguments().toCommandArray());
 
         return (joinWithPossibleTimeout(l(args), true, listener) == 0);
     }
