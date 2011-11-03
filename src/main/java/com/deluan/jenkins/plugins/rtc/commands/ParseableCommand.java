@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 /**
- * Command that issues a tf command line client command.
+ * Command that issues a scm command line client command and parses its output.
  *
  * @param <T> the return type when parsing the output from the command line client.
  * @author Erik Ramfelt

@@ -3,7 +3,7 @@ package com.deluan.jenkins.plugins.rtc.commands;
 import hudson.util.ArgumentListBuilder;
 
 /**
- * Command that issues a tf command line client command.
+ * Command that issues a scm command line client command.
  *
  * @author Erik Ramfelt
  */

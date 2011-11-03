@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,8 +19,6 @@ import java.util.regex.Pattern;
  * Date: 01/11/11
  */
 public class ListCommand extends AbstractCommand implements ParseableCommand<Map<String, JazzChangeSet>> {
-    private static final Logger logger = Logger.getLogger(ListCommand.class.getName());
-
     private Collection<String> changeSets;
 
     public ListCommand(JazzConfigurationProvider configurationProvider, Collection<String> changeSets) {
