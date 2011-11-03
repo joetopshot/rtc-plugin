@@ -1,0 +1,123 @@
+Dep�sito: https://selicjazz/jazz/
+  �rea de trabalho: (1503) "negociacao Jenkins Test Workspace"
+    Componente: (1361) "Fontes"
+      Conjuntos de mudan�as:
+        (1714)  ---$ Marcos "Dom�nio, servi�o e teste DBUnit do "CDU 10 - Retirar oferta", sem tratar concorr�ncia...Inclus�o do m�todo "recuperarOferta", necess�rio para o funcionamento do teste."
+          Altera��es:
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\GerenteOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\IDOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\ValidarOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\EstadoOferta.java
+            --a-- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\oferta\controle\ISERetirarOfertas.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\oferta\controle\ServicoOferta.java
+            ---c- \negociacao-server\src\test\java\br\gov\bcb\dicel\negociacao\dominio\teste\TesteOferta.java
+            --a-- \negociacao-server\src\test\resources\br\gov\bcb\dicel\negociacao\dominio\teste\TesteOferta.retirarOfertaPropria-result.xml
+          Itens de trabalho:
+            (1717) 516 "Servi�o + dom�nio c/ MOCK (Retirar Oferta)"
+            (1718) 515 "Teste do dom�nio c/ DBUnit (Retirar Oferta)"
+        (1657)  ---$ Roberto "Faltou compartilhar o novo projeto da bridge"
+          Altera��es:
+            --a-- \negociacao-cadastro\.jazzignore
+            --a-- \negociacao-cadastro\lib\CadastroBeanClient-HEAD.jar
+            --a-- \negociacao-cadastro\lib\CadastroEJBClient-HEAD.jar
+            --a-- \negociacao-cadastro\lib\LEIAME.txt
+            --a-- \negociacao-cadastro\pom.xml
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\comum\fabrica\FabricaEJB.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\comum\fabrica\FabricaEJBBean.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaConta.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaContaBean.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaParticipante.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaParticipanteBean.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaTituloVencimento.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ConsultaTituloVencimentoBean.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ISEServicoCadastroNegociacao.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\controle\ServicoCadastroNegociacao.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\dto\ContaDTO.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\dto\DTO.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\dto\ParticipanteDTO.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\dto\TituloVencimentoDTO.java
+            --a-- \negociacao-cadastro\src\main\java\br\gov\bcb\dicel\negociacao\servico\cadastro\dto\UsuarioDTO.java
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\ejb-jar.xml
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\jboss-app.xml
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\jboss.xml
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\MANIFEST.MF
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\orm.xml
+            --a-- \negociacao-cadastro\src\main\resources\META-INF\persistence.xml
+            --a-- \negociacao-cadastro\src\test\java\br\gov\bcb\dicel\negociacao\servico\cadastro\BridgeNegociacaoCadastroServerIntegrationTest.java
+            --a-- \negociacao-cadastro\src\test\java\br\gov\bcb\dicel\negociacao\servico\cadastro\FabricaComponentesDominio.java
+          Itens de trabalho:
+            (1656) 734 "Organiza��o da estrutura do projeto"
+        (1652)  ---$ Roberto "Projeto bridge convertido para m�dulo maven e projeto commons colocado como m�dulo do projeto principal"
+          Altera��es:
+            ---c- \negociacao-commons-tmp\.project
+            ---c- \negociacao-commons-tmp\pom.xml
+            ---c- \negociacao-server\pom.xml
+            ---c- \negociacao-web\pom.xml
+            ---c- \negociacao\build.properties
+            ---c- \negociacao\build.xml
+            ---c- \negociacao\pom.xml
+          Itens de trabalho:
+            (1656) 734 "Organiza��o da estrutura do projeto"
+        (1651)  ---$ Marcos <Nenhum coment�rio>
+          Altera��es:
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\foo\FooMB.java
+          Itens de trabalho:
+            (1638) 730 "Faxina SONAR"
+        (1650)  ---$ Marcos <Nenhum coment�rio>
+          Altera��es:
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\ValidarOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\Oferta.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\foo\FooMB.java
+          Itens de trabalho:
+            (1638) 730 "Faxina SONAR"
+        (1648)  ---$ Daniel "altera��o para viabilizar hotdeploy."
+          Altera��es:
+            ---c- \negociacao-web\pom.xml
+          Itens de trabalho:
+            (1649) 496 "Hot deploy"
+        (1645)  ---$ Marcos "Os JavaDocs n�o foram conclu�dos pois o SONAR n�o verifica a aus�ncia deles."
+          Altera��es:
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\hello\entidade\Hello.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\GerenteOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\IDOferta.java
+            --a-- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\ValidarOferta.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\foo\FooMB.java
+          Itens de trabalho:
+            (1638) 730 "Faxina SONAR"
+        (1640)  ---$ Pedro "Cria��o da tela de cadastro de oferta, ainda n�o finalizada. Deliver efetuado para dar continuidade ao desenvolvimento do projeto."
+          Altera��es:
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\Oferta.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\oferta\OfertaMB.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\fabricaejb\FabricaServico.java
+            --a-- \negociacao-web\src\main\resources\logback.xml
+            --a-- \negociacao-web\src\main\webapp\img\close.png
+            ---c- \negociacao-web\src\main\webapp\pages\oferta\cadastrar.xhtml
+            ---c- \negociacao-web\src\main\webapp\pages\oferta\listar.xhtml
+            ---c- \negociacao-web\src\main\webapp\WEB-INF\.pages.xml.spdia
+            ---c- \negociacao-web\src\main\webapp\WEB-INF\pages.xml
+          Itens de trabalho:
+            (1603) 506 "WEB + XHTML (Cadastrar Oferta)"
+        (1625)  ---$ Marcos <Nenhum coment�rio>
+          Altera��es:
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\comum\Erro.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\GerenteOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\controle\IDOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\EstadoOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\TipoOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\dominio\oferta\entidade\TitularidadeOferta.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\habilitartitulos\controle\ISEHabilitarTitulos.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\habilitartitulos\controle\ServicoHabilitarTitulos.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\helloworld\controle\HelloDAO.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\helloworld\controle\HelloDAOImpl.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\helloworld\controle\ISEHelloWorld.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\oferta\controle\ISELancarOfertas.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\oferta\controle\ISEListarOfertas.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servico\seguranca\controle\ISEControleAcesso.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servicocadastro\FabricaServicoCadastro.java
+            ---c- \negociacao-server\src\main\java\br\gov\bcb\dicel\negociacao\servicocadastro\FabricaServicoCadastroBean.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\foo\FooMB.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\habilitartitulos\HabilitarTitulosMB.java
+            ---c- \negociacao-web\src\main\java\br\gov\bcb\dicel\negociacao\web\controle\oferta\OfertaMB.java
+          Itens de trabalho:
+            (1638) 730 "Faxina SONAR"
+            (1487) 504 "Teste do servi�o c/ MOCK (Cadastrar Oferta)"

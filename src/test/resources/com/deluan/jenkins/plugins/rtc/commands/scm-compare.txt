@@ -1,0 +1,9 @@
+(1625) |Marcos|marcos@email.com.br| <Nenhum coment�rio> |2011-10-31-11:36:36|
+(1640) |Pedro|pedro.modrach@email.com.br| Cria��o da tela de cadastro de oferta, ainda n�o finalizada. Deliver efetuado para dar continuidade ao desenvolvimento do projeto. |2011-10-31-16:56:23|
+(1645) |Marcos|marcos@email.com.br| Os JavaDocs n�o foram conclu�dos pois o SONAR n�o verifica a aus�ncia deles. |2011-10-31-17:11:50|
+(1648) |Daniel|daniel.marreco@email.com.br| altera��o para viabilizar hotdeploy. |2011-10-31-17:25:32|
+(1650) |Marcos|marcos@email.com.br| <Nenhum coment�rio> |2011-10-31-17:34:31|
+(1651) |Marcos|marcos@email.com.br| <Nenhum coment�rio> |2011-10-31-17:41:34|
+(1652) |Roberto|roberto.rodriguez@email.com.br| Projeto bridge convertido para m�dulo maven e projeto commons colocado como m�dulo do projeto principal |2011-11-01-12:04:44|
+(1657) |Roberto|roberto.rodriguez@email.com.br| Faltou compartilhar o novo projeto da bridge |2011-11-01-12:16:00|
+(1714) |Marcos|marcos@email.com.br| Dom�nio, servi�o e teste DBUnit do "CDU 10 - Retirar oferta", sem tratar concorr�ncia...Inclus�o do m�todo "recuperarOferta", necess�rio para o funcionamento do teste. |2011-11-01-14:06:06|
