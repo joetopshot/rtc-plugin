@@ -22,29 +22,13 @@ public class JazzRepositoryBrowserTest {
     private static final String SERVER_URL = "http://jazzserver:9443/jazz";
 
     @Test
-    public void testGetUrl() throws Exception {
-        JazzRepositoryBrowser browser = new JazzRepositoryBrowser(SERVER_URL);
-        assertEquals(SERVER_URL, browser.getUrl());
-    }
-
-    @Test
     public void testGetWorkItemLink() throws Exception {
-        JazzRepositoryBrowser browser = new JazzRepositoryBrowser(SERVER_URL);
-        JazzChangeSet changeSet = new JazzChangeSet();
-        String workItem = "503 \"This is a test\"";
-        changeSet.addWorkItem(workItem);
-        assertEquals(new URL(SERVER_URL + "/resource/itemName/com.ibm.team.workitem.WorkItem/503"),
-                browser.getWorkItemLink(changeSet, workItem));
-    }
-
-    @Test
-    public void testGetWorkItemLinkUsingScmConfiguration() throws Exception {
         AbstractBuild build = mock(AbstractBuild.class);
         AbstractProject<?, ?> project = mock(AbstractProject.class);
         when(build.getProject()).thenReturn(project);
         when(project.getScm()).thenReturn(new JazzSCM(SERVER_URL, null, null, null, null));
 
-        JazzRepositoryBrowser browser = new JazzRepositoryBrowser(null);
+        JazzRepositoryBrowser browser = new JazzRepositoryBrowser();
         JazzChangeSet changeSet = new JazzChangeSet();
         new JazzChangeSetList(build, Arrays.asList(changeSet));
         String workItem = "503 \"This is a test\"";
