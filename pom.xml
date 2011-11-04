@@ -13,7 +13,7 @@
 
     <name>Jenkins RTC plugin</name>
     <description>Integrates Hudson/Jenkins to Rational Team Concert</description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/RTC+Plugin</url>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/Rational+Team+Concert+Plugin</url>
     <licenses>
         <license>
             <name>MIT license</name>
