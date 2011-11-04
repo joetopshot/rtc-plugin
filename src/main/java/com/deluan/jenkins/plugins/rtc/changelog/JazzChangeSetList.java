@@ -14,7 +14,7 @@ import java.util.List;
 public class JazzChangeSetList extends ChangeLogSet<JazzChangeSet> {
     private final List<JazzChangeSet> changeSets;
 
-    JazzChangeSetList(AbstractBuild build, List<JazzChangeSet> logs) {
+    public JazzChangeSetList(AbstractBuild build, List<JazzChangeSet> logs) {
         super(build);
         Collections.reverse(logs);  // put new things first
         this.changeSets = Collections.unmodifiableList(logs);

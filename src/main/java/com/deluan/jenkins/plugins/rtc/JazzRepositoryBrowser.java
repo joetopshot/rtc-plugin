@@ -7,9 +7,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.scm.RepositoryBrowser;
 import hudson.scm.SCM;
-import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,7 +43,7 @@ public class JazzRepositoryBrowser extends RepositoryBrowser<JazzChangeSet> {
 
     private String getBaseUrlString(JazzChangeSet changeSet) throws MalformedURLException {
         if (repositoryUrl == null) {
-            return String.format("%s/", getServerConfiguration(changeSet));
+            return getServerConfiguration(changeSet);
         } else {
             return repositoryUrl;
         }
@@ -66,17 +64,8 @@ public class JazzRepositoryBrowser extends RepositoryBrowser<JazzChangeSet> {
     @Extension
     public static final class DescriptorImpl extends Descriptor<RepositoryBrowser<?>> {
 
-        private String baseUrl;
-
         public DescriptorImpl() {
             super(JazzRepositoryBrowser.class);
-        }
-
-        @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-            baseUrl = Util.fixEmpty(req.getParameter("rtc.browser.url").trim());
-            save();
-            return true;
         }
 
         @Override
@@ -84,9 +73,6 @@ public class JazzRepositoryBrowser extends RepositoryBrowser<JazzChangeSet> {
             return "Jazz Web Access";
         }
 
-        public String getBaseUrl() {
-            return baseUrl;
-        }
     }
 
 
