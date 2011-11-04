@@ -20,7 +20,7 @@ import java.util.List;
  */
 public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparable<JazzChangeSet> {
     private static final String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";
-    private final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+    protected static final SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 
     private String user;
     private String email;
@@ -59,7 +59,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
 
     @Exported
     public String getDateStr() {
-        return sdf.format(date);
+        return formatter.format(date);
     }
 
     @Exported
@@ -120,7 +120,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
     }
 
     public void setDateStr(String dateStr) throws ParseException {
-        date = sdf.parse(dateStr);
+        date = formatter.parse(dateStr);
     }
 
     public void setRev(String rev) {
@@ -190,6 +190,26 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
                 return EditType.ADD;
             }
             return EditType.EDIT;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Item item = (Item) o;
+
+            if (action != null ? !action.equals(item.action) : item.action != null) return false;
+            if (path != null ? !path.equals(item.path) : item.path != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = path != null ? path.hashCode() : 0;
+            result = 31 * result + (action != null ? action.hashCode() : 0);
+            return result;
         }
     }
 }
