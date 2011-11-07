@@ -94,12 +94,20 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
         return items;
     }
 
+    public boolean hasItems() {
+        return !items.isEmpty();
+    }
+
     /**
      * Gets all work items associated with this change set
      */
     @Exported
     public List<String> getWorkItems() {
         return workItems;
+    }
+
+    public boolean hasWorkItems() {
+        return !workItems.isEmpty();
     }
 
     @Override

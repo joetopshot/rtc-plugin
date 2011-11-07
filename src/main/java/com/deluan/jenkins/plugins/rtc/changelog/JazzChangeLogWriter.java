@@ -17,33 +17,51 @@ public class JazzChangeLogWriter {
         PrintWriter writer = new PrintWriter(new FileWriter(changelogFile));
         writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.println("<changelog>");
-        for (JazzChangeSet changeSet : changeSetList) {
-            writer.println(String.format("\t<changeset rev=\"%s\">", changeSet.getRev()));
-            writer.println(String.format("\t\t<date>%s</date>", changeSet.getDateStr()));
-            writer.println(String.format("\t\t<user>%s</user>", escapeForXml(changeSet.getUser())));
-            writer.println(String.format("\t\t<email>%s</email>", escapeForXml(changeSet.getEmail())));
-            writer.println(String.format("\t\t<comment>%s</comment>", escapeForXml(changeSet.getMsg())));
 
-            if (!changeSet.getItems().isEmpty()) {
-                writer.println("\t\t<files>");
-                for (JazzChangeSet.Item item : changeSet.getItems()) {
-                    writer.println(String.format("\t\t\t<file action=\"%s\">%s</file>", item.getAction(),
-                            escapeForXml(item.getPath())));
-                }
-                writer.println("\t\t</files>");
-            }
+        writeChangeSetList(changeSetList, writer);
 
-            if (!changeSet.getWorkItems().isEmpty()) {
-                writer.println("\t\t<workitems>");
-                for (String workItem : changeSet.getWorkItems()) {
-                    writer.println(String.format("\t\t\t<workitem>%s</workitem>", escapeForXml(workItem)));
-                }
-                writer.println("\t\t</workitems>");
-            }
-            writer.println("\t</changeset>");
-        }
         writer.println("</changelog>");
         writer.close();
+    }
+
+    private void writeChangeSetList(Collection<JazzChangeSet> changeSetList, PrintWriter writer) {
+        for (JazzChangeSet changeSet : changeSetList) {
+            writeChangeSet(changeSet, writer);
+        }
+    }
+
+    private void writeChangeSet(JazzChangeSet changeSet, PrintWriter writer) {
+        writer.println(String.format("\t<changeset rev=\"%s\">", changeSet.getRev()));
+        writer.println(String.format("\t\t<date>%s</date>", changeSet.getDateStr()));
+        writer.println(String.format("\t\t<user>%s</user>", escapeForXml(changeSet.getUser())));
+        writer.println(String.format("\t\t<email>%s</email>", escapeForXml(changeSet.getEmail())));
+        writer.println(String.format("\t\t<comment>%s</comment>", escapeForXml(changeSet.getMsg())));
+
+        if (!changeSet.hasItems()) {
+            writeItems(changeSet, writer);
+        }
+
+        if (!changeSet.hasWorkItems()) {
+            writeWorkItems(changeSet, writer);
+        }
+        writer.println("\t</changeset>");
+    }
+
+    private void writeWorkItems(JazzChangeSet changeSet, PrintWriter writer) {
+        writer.println("\t\t<workitems>");
+        for (String workItem : changeSet.getWorkItems()) {
+            writer.println(String.format("\t\t\t<workitem>%s</workitem>", escapeForXml(workItem)));
+        }
+        writer.println("\t\t</workitems>");
+    }
+
+    private void writeItems(JazzChangeSet changeSet, PrintWriter writer) {
+        writer.println("\t\t<files>");
+        for (JazzChangeSet.Item item : changeSet.getItems()) {
+            writer.println(String.format("\t\t\t<file action=\"%s\">%s</file>", item.getAction(),
+                    escapeForXml(item.getPath())));
+        }
+        writer.println("\t\t</files>");
     }
 
     /**
