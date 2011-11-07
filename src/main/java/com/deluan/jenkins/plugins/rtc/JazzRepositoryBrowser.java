@@ -6,6 +6,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.scm.RepositoryBrowser;
 import hudson.scm.SCM;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -15,6 +16,10 @@ import java.net.URL;
  * @author deluan
  */
 public class JazzRepositoryBrowser extends RepositoryBrowser<JazzChangeSet> {
+
+    @DataBoundConstructor
+    public JazzRepositoryBrowser() {
+    }
 
     private String getBaseUrlString(JazzChangeSet changeSet) throws MalformedURLException {
         AbstractProject<?, ?> project = changeSet.getParent().build.getProject();
