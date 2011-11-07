@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 
 public class CommandTest {
 
+    public static final String[] TEST_REVISIONS = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
     JazzConfigurationProvider config;
 
     @Before
@@ -62,9 +63,8 @@ public class CommandTest {
         Map<String, JazzChangeSet> result = cmd.parse(reader);
 
         assertEquals("The number of change sets in the list was incorrect", 9, result.size());
-        String[] revs = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
 
-        for (String rev : revs) {
+        for (String rev : TEST_REVISIONS) {
             assertNotNull("Change set (" + rev + ") not in result", result.get(rev));
         }
 
@@ -78,18 +78,14 @@ public class CommandTest {
 
     @Test
     public void listCommandArguments() throws Exception {
-        String[] revs = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
-        ListCommand cmd = new ListCommand(config, Arrays.asList(revs));
+        ListCommand cmd = new ListCommand(config, Arrays.asList(TEST_REVISIONS));
 
         assertEquals("list changesets -u user -P password -d c:\\test 1652 1625 1650 1651 1648 1657 1714 1645 1640", cmd.getArguments().toStringWithQuote());
     }
 
     @Test
     public void listCommandParse() throws Exception {
-        String[] revs = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
-        ListCommand cmd = new ListCommand(config, Arrays.asList(revs));
+        ListCommand cmd = new ListCommand(config, Arrays.asList(TEST_REVISIONS));
 
         BufferedReader reader = getReader("scm-list.txt");
 
@@ -97,7 +93,7 @@ public class CommandTest {
 
         assertEquals("The number of change sets in the list was incorrect", 9, result.size());
 
-        for (String rev : revs) {
+        for (String rev : TEST_REVISIONS) {
             assertNotNull("Change set (" + rev + ") not in result", result.get(rev));
         }
 
@@ -120,18 +116,14 @@ public class CommandTest {
 
     @Test
     public void acceptCommandArguments() throws Exception {
-        String[] revs = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
-        AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(revs));
+        AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS));
 
         assertEquals("accept -u user -P password -d c:\\test --flow-components -o -v -c 1652 1625 1650 1651 1648 1657 1714 1645 1640", cmd.getArguments().toStringWithQuote());
     }
 
     @Test
     public void acceptCommandParse() throws Exception {
-        String[] revs = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
-        AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(revs));
+        AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS));
 
         BufferedReader reader = getReader("scm-accept.txt");
 
@@ -139,7 +131,7 @@ public class CommandTest {
 
         assertEquals("The number of change sets in the list was incorrect", 9, result.size());
 
-        for (String rev : revs) {
+        for (String rev : TEST_REVISIONS) {
             assertNotNull("Change set (" + rev + ") not in result", result.get(rev));
         }
 
