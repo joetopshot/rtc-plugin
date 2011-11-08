@@ -15,17 +15,15 @@ import org.kohsuke.stapler.framework.io.WriterOutputStream;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * Encapsulates the invocation of RTC's SCM Command Line Interface, "scm".
  *
  * @author Deluan Quintao
  */
+@SuppressWarnings("JavaDoc")
 public class JazzClient implements JazzConfigurationProvider {
     public static final String SCM_CMD = "scm";
-
-    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private static final int TIMEOUT = 60 * 5; // in seconds
 

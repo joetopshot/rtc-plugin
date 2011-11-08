@@ -30,6 +30,7 @@ public class JazzChangeSetList extends ChangeLogSet<JazzChangeSet> {
         return changeSets.iterator();
     }
 
+    @SuppressWarnings("unused")
     public List<JazzChangeSet> getLogs() {
         return changeSets;
     }

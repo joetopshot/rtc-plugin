@@ -98,9 +98,6 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
         return !items.isEmpty();
     }
 
-    /**
-     * Gets all work items associated with this change set
-     */
     @Exported
     public List<String> getWorkItems() {
         return workItems;
@@ -149,6 +146,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
     }
 
     @ExportedBean(defaultVisibility = 999)
+    @SuppressWarnings("unused")
     public static class Item {
         private String path;
         private String action;
@@ -208,6 +206,7 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
             Item item = (Item) o;
 
             if (action != null ? !action.equals(item.action) : item.action != null) return false;
+            //noinspection RedundantIfStatement
             if (path != null ? !path.equals(item.path) : item.path != null) return false;
 
             return true;
