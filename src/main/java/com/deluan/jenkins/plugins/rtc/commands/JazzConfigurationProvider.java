@@ -2,6 +2,9 @@ package com.deluan.jenkins.plugins.rtc.commands;
 
 import hudson.FilePath;
 
+/**
+ * @author deluan
+ */
 public interface JazzConfigurationProvider {
 
     public String getRepositoryLocation();

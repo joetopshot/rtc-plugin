@@ -3,9 +3,7 @@ package com.deluan.jenkins.plugins.rtc.commands;
 import hudson.util.ArgumentListBuilder;
 
 /**
- * User: deluan
- * Date: 01/11/11
- * Time: 16:00
+ * @author deluan
  */
 public class LoadCommand extends AbstractCommand {
 

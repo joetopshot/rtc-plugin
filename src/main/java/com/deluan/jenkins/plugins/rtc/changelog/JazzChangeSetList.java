@@ -8,8 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * User: deluan
- * Date: 21/10/11
+ * @author deluan
  */
 public class JazzChangeSetList extends ChangeLogSet<JazzChangeSet> {
     private final List<JazzChangeSet> changeSets;

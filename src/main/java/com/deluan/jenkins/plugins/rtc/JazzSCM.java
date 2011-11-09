@@ -23,8 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * User: deluan
- * Date: 19/10/11
+ * @author deluan
  */
 @SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {

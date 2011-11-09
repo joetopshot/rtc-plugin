@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Encapsulates the invocation of RTC's SCM Command Line Interface, "scm".
  *
- * @author Deluan Quintao
+ * @author deluan
  */
 @SuppressWarnings("JavaDoc")
 public class JazzClient implements JazzConfigurationProvider {

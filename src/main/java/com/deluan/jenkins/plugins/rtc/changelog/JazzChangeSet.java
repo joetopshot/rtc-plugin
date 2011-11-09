@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * {@link hudson.scm.ChangeLogSet} for IBM Rational Team Concert Source Code Management
  *
- * @author Deluan Cotts Quintao
+ * @author deluan
  */
 public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparable<JazzChangeSet> {
     private static final String DATE_FORMAT = "yyyy-MM-dd-HH:mm:ss";

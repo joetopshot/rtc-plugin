@@ -13,8 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * User: deluan
- * Date: 01/11/11
+ * @author deluan
  */
 public class CompareCommand extends AbstractCommand implements ParseableCommand<Map<String, JazzChangeSet>> {
     private static final Logger logger = Logger.getLogger(CompareCommand.class.getName());

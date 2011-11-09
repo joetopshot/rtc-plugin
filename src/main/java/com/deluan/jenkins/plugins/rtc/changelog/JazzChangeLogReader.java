@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: deluan
- * Date: 21/10/11
+ * @author deluan
  */
 public class JazzChangeLogReader extends ChangeLogParser {
 

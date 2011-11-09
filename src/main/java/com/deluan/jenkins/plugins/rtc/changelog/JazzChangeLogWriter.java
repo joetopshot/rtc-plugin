@@ -7,9 +7,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 
 /**
- * User: deluan
- * Date: 28/10/11
- * Time: 10:28
+ * @author deluan
  */
 public class JazzChangeLogWriter {
 

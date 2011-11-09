@@ -3,6 +3,9 @@ package com.deluan.jenkins.plugins.rtc.commands;
 import hudson.util.ArgumentListBuilder;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * @author deluan
+ */
 public abstract class AbstractCommand implements Command {
 
     private final JazzConfigurationProvider config;

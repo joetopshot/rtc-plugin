@@ -15,8 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * User: deluan
- * Date: 01/11/11
+ * @author deluan
  */
 public class ListCommand extends AbstractCommand implements ParseableCommand<Map<String, JazzChangeSet>> {
     private Collection<String> changeSets;

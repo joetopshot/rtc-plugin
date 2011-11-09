@@ -3,8 +3,7 @@ package com.deluan.jenkins.plugins.rtc.commands;
 import hudson.util.ArgumentListBuilder;
 
 /**
- * User: deluan
- * Date: 03/11/11
+ * @author deluan
  */
 public class StopDaemonCommand extends AbstractCommand {
 
