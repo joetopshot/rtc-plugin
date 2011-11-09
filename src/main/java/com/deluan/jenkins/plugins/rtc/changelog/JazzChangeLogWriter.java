@@ -66,22 +66,18 @@ public class JazzChangeLogWriter {
      * Converts the input in the way that it can be written to the XML.
      * Special characters are converted to XML understandable way.
      *
-     * @param object The object to be escaped.
+     * @param string The string to be escaped.
      * @return Escaped string that can be written to XML.
      */
-    private String escapeForXml(Object object) {
-        if (object == null) {
+    protected String escapeForXml(String string) {
+        if (string == null) {
             return null;
         }
 
         //Loop through and replace the special chars.
-        String string = object.toString();
-        int size = string.length();
-        char ch;
-        StringBuilder escapedString = new StringBuilder(size);
-        for (int index = 0; index < size; index++) {
+        StringBuilder escapedString = new StringBuilder(string.length());
+        for (Character ch : string.toCharArray()) {
             //Convert special chars.
-            ch = string.charAt(index);
             switch (ch) {
                 case '&':
                     escapedString.append("&amp;");
