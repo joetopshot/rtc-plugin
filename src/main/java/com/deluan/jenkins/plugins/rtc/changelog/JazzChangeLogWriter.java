@@ -1,9 +1,8 @@
 package com.deluan.jenkins.plugins.rtc.changelog;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
 import java.util.Collection;
 
 /**
@@ -12,7 +11,16 @@ import java.util.Collection;
 public class JazzChangeLogWriter {
 
     public void write(Collection<JazzChangeSet> changeSetList, File changelogFile) throws IOException {
-        PrintWriter writer = new PrintWriter(new FileWriter(changelogFile));
+        FileWriter writer = new FileWriter(changelogFile);
+        try {
+            write(changeSetList, writer);
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
+    protected void write(Collection<JazzChangeSet> changeSetList, Writer output) throws IOException {
+        PrintWriter writer = new PrintWriter(output);
         writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.println("<changelog>");
 
@@ -35,22 +43,14 @@ public class JazzChangeLogWriter {
         writer.println(String.format("\t\t<email>%s</email>", escapeForXml(changeSet.getEmail())));
         writer.println(String.format("\t\t<comment>%s</comment>", escapeForXml(changeSet.getMsg())));
 
-        if (!changeSet.hasItems()) {
+        if (changeSet.hasItems()) {
             writeItems(changeSet, writer);
         }
 
-        if (!changeSet.hasWorkItems()) {
+        if (changeSet.hasWorkItems()) {
             writeWorkItems(changeSet, writer);
         }
         writer.println("\t</changeset>");
-    }
-
-    private void writeWorkItems(JazzChangeSet changeSet, PrintWriter writer) {
-        writer.println("\t\t<workitems>");
-        for (String workItem : changeSet.getWorkItems()) {
-            writer.println(String.format("\t\t\t<workitem>%s</workitem>", escapeForXml(workItem)));
-        }
-        writer.println("\t\t</workitems>");
     }
 
     private void writeItems(JazzChangeSet changeSet, PrintWriter writer) {
@@ -60,6 +60,14 @@ public class JazzChangeLogWriter {
                     escapeForXml(item.getPath())));
         }
         writer.println("\t\t</files>");
+    }
+
+    private void writeWorkItems(JazzChangeSet changeSet, PrintWriter writer) {
+        writer.println("\t\t<workitems>");
+        for (String workItem : changeSet.getWorkItems()) {
+            writer.println(String.format("\t\t\t<workitem>%s</workitem>", escapeForXml(workItem)));
+        }
+        writer.println("\t\t</workitems>");
     }
 
     /**
