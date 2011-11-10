@@ -5,9 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.hamcrest.core.Is.is;
@@ -65,7 +66,7 @@ public class JazzChangeLogWriterTest {
 
     @Test
     public void testWriteEmptyChangeSet() throws Exception {
-        StringWriter output = generateChangeSetXml(null);
+        StringWriter output = generateChangeSetXml();
 
         assertXMLEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<changelog></changelog>",
@@ -164,11 +165,36 @@ public class JazzChangeLogWriterTest {
                 output.getBuffer().toString());
     }
 
-    private StringWriter generateChangeSetXml(JazzChangeSet changeSet) throws Exception {
-        Collection<JazzChangeSet> changeSetList = new HashSet<JazzChangeSet>();
-        if (changeSet != null) {
-            changeSetList.add(changeSet);
-        }
+    @Test
+    public void testWriteTwoChangeSets() throws Exception {
+        JazzChangeSet changeSet1 = createBasicChangeSet();
+        JazzChangeSet changeSet2 = createBasicChangeSet();
+
+        StringWriter output = generateChangeSetXml(changeSet1, changeSet2);
+
+        assertXMLEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<changelog>" +
+                "<changeset rev=\"" + changeSet1.getRev() + "\">" +
+                "<date>" + changeSet1.getDateStr() + "</date>" +
+                "<user>" + changeSet1.getUser() + "</user>" +
+                "<email>" + changeSet1.getEmail() + "</email>" +
+                "<comment>" + changeSet1.getMsg() + "</comment>" +
+                "</changeset>" +
+
+                "<changeset rev=\"" + changeSet2.getRev() + "\">" +
+                "<date>" + changeSet2.getDateStr() + "</date>" +
+                "<user>" + changeSet2.getUser() + "</user>" +
+                "<email>" + changeSet2.getEmail() + "</email>" +
+                "<comment>" + changeSet2.getMsg() + "</comment>" +
+                "</changeset>" +
+                "</changelog>",
+                output.getBuffer().toString());
+    }
+
+    private StringWriter generateChangeSetXml(JazzChangeSet... changeSets) throws Exception {
+        Collection<JazzChangeSet> changeSetList = new ArrayList<JazzChangeSet>();
+        Collections.addAll(changeSetList, changeSets);
+
         StringWriter output = new StringWriter();
         changeLogWriter.write(changeSetList, output);
         return output;
