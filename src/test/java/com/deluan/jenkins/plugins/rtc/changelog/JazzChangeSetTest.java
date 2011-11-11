@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.changelog;
 
+import com.gargoylesoftware.base.testing.EqualsTester;
 import hudson.scm.EditType;
 import org.junit.Test;
 
@@ -156,5 +157,25 @@ public class JazzChangeSetTest {
 
         changeSet2.setDateStr("2011-11-04-10:36:00");
         assertEquals(1, changeSet1.compareTo(changeSet2));
+    }
+
+    private JazzChangeSet createChangeSet(String rev, Date date, String user, String email, String msg) {
+        JazzChangeSet changeSet = new JazzChangeSet();
+        changeSet.setRev(rev);
+        changeSet.setDate(date);
+        changeSet.setUser(user);
+        changeSet.setMsg(msg);
+        changeSet.setEmail(email);
+
+        return changeSet;
+    }
+
+    @Test
+    public void testEqualsAndHash() {
+        Date date = new Date();
+        final JazzChangeSet a = createChangeSet("1", date, "deluan", "email@a.com", "msg"); // original JazzChangeSet
+        final JazzChangeSet b = createChangeSet("1", date, "deluan", "email@a.com", "msg"); // another JazzChangeSet that has the same values as the original
+        final JazzChangeSet c = createChangeSet("2", date, "user", "user@a.com", "msg2");   // another JazzChangeSet with different values
+        new EqualsTester(a, b, c, null);
     }
 }

@@ -3,6 +3,7 @@ package com.deluan.jenkins.plugins.rtc.changelog;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.EditType;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
@@ -121,7 +122,12 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        try {
+            String dateStr = formatter.format(date);
+            this.date = formatter.parse(dateStr);
+        } catch (ParseException e) {
+            this.date = date;
+        }
     }
 
     public void setDateStr(String dateStr) throws ParseException {
@@ -143,6 +149,44 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
     public void copyItemsFrom(JazzChangeSet changeSet2) {
         this.items = new ArrayList<Item>(changeSet2.getItems());
         this.workItems = new ArrayList<String>(changeSet2.getWorkItems());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("rev", rev).
+                append("date", date).
+                toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JazzChangeSet changeSet = (JazzChangeSet) o;
+
+        if (date != null ? !date.equals(changeSet.date) : changeSet.date != null) return false;
+        if (email != null ? !email.equals(changeSet.email) : changeSet.email != null) return false;
+        if (items != null ? !items.equals(changeSet.items) : changeSet.items != null) return false;
+        if (msg != null ? !msg.equals(changeSet.msg) : changeSet.msg != null) return false;
+        if (rev != null ? !rev.equals(changeSet.rev) : changeSet.rev != null) return false;
+        if (user != null ? !user.equals(changeSet.user) : changeSet.user != null) return false;
+        if (workItems != null ? !workItems.equals(changeSet.workItems) : changeSet.workItems != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = user != null ? user.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (rev != null ? rev.hashCode() : 0);
+        result = 31 * result + (msg != null ? msg.hashCode() : 0);
+        result = 31 * result + (items != null ? items.hashCode() : 0);
+        result = 31 * result + (workItems != null ? workItems.hashCode() : 0);
+        return result;
     }
 
     @ExportedBean(defaultVisibility = 999)
