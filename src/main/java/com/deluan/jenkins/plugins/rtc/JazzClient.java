@@ -13,7 +13,10 @@ import hudson.util.ForkOutputStream;
 import org.kohsuke.stapler.framework.io.WriterOutputStream;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -124,31 +127,26 @@ public class JazzClient implements JazzConfigurationProvider {
         return new ArrayList<JazzChangeSet>(compareCmdResults.values());
     }
 
+    private String getVersion() throws IOException, InterruptedException {
+        VersionCommand cmd = new VersionCommand(this);
+        return execute(cmd);
+    }
+
     private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
-
-        AcceptCommand cmd = new AcceptCommand(this, changeSets);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(popen(cmd.getArguments()).toByteArray())));
-        Map<String, JazzChangeSet> result = Collections.emptyMap();
-
-        try {
-            result = cmd.parse(in);
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            in.close();
-        }
-
-        return result;
+        String version = getVersion(); // TODO The version should be checked when configuring the Jazz Executable
+        AcceptCommand cmd = new AcceptCommand(this, changeSets, version);
+        return execute(cmd);
     }
 
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
         CompareCommand cmd = new CompareCommand(this);
+        return execute(cmd);
+    }
 
+    private <T> T execute(ParseableCommand<T> cmd) throws IOException, InterruptedException {
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 new ByteArrayInputStream(popen(cmd.getArguments()).toByteArray())));
-        Map<String, JazzChangeSet> result = Collections.emptyMap();
+        T result;
 
         try {
             result = cmd.parse(in);

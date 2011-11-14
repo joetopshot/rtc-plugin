@@ -1,0 +1,33 @@
+Repository: https://testserver/jazz/
+ Workspace: (1503) "negociacao Jenkins Test Workspace"
+   Component: (1361) "Fontes"
+     Change sets:
+       (1008) Marcos --$ "Add option to build SA zips without deploying them."
+         Changes:
+           --c /negociacao/dominio/oferta/controle/GerenteOferta.java
+         Work items:
+           (1015) "3076: Build process for Solution Accelerator"
+       (1001) Marcos --$ "The translated readme files."
+         Changes:
+           -a- /negociacao-cadastro/.jazzignore
+           -a- /negociacao-cadastro/lib/LEIAME.txt
+           -a- /negociacao-cadastro/pom.xml
+           -a- /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/comum/fabrica/FabricaEJB.java
+           -a- /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/comum/fabrica/FabricaEJBBean.java
+           -a- /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/servico/cadastro/controle/ConsultaConta.java
+         Work items:
+           (1015) "3076: Build process for Solution Accelerator"
+       (1009) Deluan --$ "Add a target to test the SA zip build without deploying."
+         Changes:
+           --c /negociacao-cadastro/src/main/resources/META-INF/orm.xml
+         Work items:
+           (1015) "3076: Build process for Solution Accelerator"
+       (1002) Deluan --$ "Putting the readme files back to the top level so that the links are correct."
+         Changes:
+           -m- /negociacao-cadastro/.jazzignore (moved from /negociacao-cadastro/.jazzignore.OLD)
+           --c /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/comum/fabrica/FabricaEJB.java
+           -a- /negociacao-cadastro/pom.xml
+           --c /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/comum/fabrica/FabricaEJBBean.java
+           -d- /negociacao-cadastro/src/main/java/br/gov/bcb/dicel/negociacao/servico/cadastro/controle/ConsultaConta.java
+         Work items:
+           (1015) "3076: Build process for Solution Accelerator"
