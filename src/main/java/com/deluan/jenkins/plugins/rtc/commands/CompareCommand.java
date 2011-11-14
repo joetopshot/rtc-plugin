@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
     }
 
     public Map<String, JazzChangeSet> parse(BufferedReader reader) throws ParseException, IOException {
-        Map<String, JazzChangeSet> result = new HashMap<String, JazzChangeSet>();
+        Map<String, JazzChangeSet> result = new LinkedHashMap<String, JazzChangeSet>();
 
         String line;
         while ((line = reader.readLine()) != null) {

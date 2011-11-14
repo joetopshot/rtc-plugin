@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ public class ListCommand extends AbstractCommand implements ParseableCommand<Map
 
     public ListCommand(JazzConfigurationProvider configurationProvider, Collection<String> changeSets) {
         super(configurationProvider);
-        this.changeSets = new HashSet<String>(changeSets);
+        this.changeSets = new LinkedHashSet<String>(changeSets);
     }
 
     public ArgumentListBuilder getArguments() {

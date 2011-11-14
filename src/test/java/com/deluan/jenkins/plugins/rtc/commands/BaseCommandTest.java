@@ -17,7 +17,9 @@ import static org.mockito.Mockito.when;
  * @author deluan
  */
 abstract public class BaseCommandTest {
-    JazzConfigurationProvider config;
+
+    protected static final String[] TEST_REVISIONS = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
+    protected JazzConfigurationProvider config;
 
     @Before
     public void setUp() {

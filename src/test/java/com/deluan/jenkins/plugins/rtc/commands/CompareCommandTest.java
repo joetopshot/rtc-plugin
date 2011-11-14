@@ -9,8 +9,6 @@ import static org.junit.Assert.assertEquals;
 
 public class CompareCommandTest extends BaseCommandTest {
 
-    public static final String[] TEST_REVISIONS = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
     @Test
     public void compareCommandArguments() throws Exception {
         CompareCommand cmd = new CompareCommand(config);

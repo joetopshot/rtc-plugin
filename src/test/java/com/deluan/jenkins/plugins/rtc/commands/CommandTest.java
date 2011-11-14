@@ -12,8 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CommandTest extends BaseCommandTest {
 
-    public static final String[] TEST_REVISIONS = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-
     @Test
     public void loadCommandArguments() throws Exception {
         LoadCommand cmd = new LoadCommand(config);
@@ -32,7 +30,7 @@ public class CommandTest extends BaseCommandTest {
     public void listCommandArguments() throws Exception {
         ListCommand cmd = new ListCommand(config, Arrays.asList(TEST_REVISIONS));
 
-        assertEquals("list changesets -u user -P password -d c:\\test 1652 1625 1650 1651 1648 1657 1714 1645 1640", cmd.getArguments().toStringWithQuote());
+        assertEquals("list changesets -u user -P password -d c:\\test 1714 1657 1652 1651 1650 1648 1645 1640 1625", cmd.getArguments().toStringWithQuote());
     }
 
     @Test
