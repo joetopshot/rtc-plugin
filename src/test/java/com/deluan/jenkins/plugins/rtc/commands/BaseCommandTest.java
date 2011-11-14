@@ -43,7 +43,7 @@ abstract public class BaseCommandTest {
         return result;
     }
 
-    private BufferedReader getReader(String fileName) {
+    protected BufferedReader getReader(String fileName) {
         InputStream in = getClass().getResourceAsStream(fileName);
         return new BufferedReader(new InputStreamReader(in));
     }

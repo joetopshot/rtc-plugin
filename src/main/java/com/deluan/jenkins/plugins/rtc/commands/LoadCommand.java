@@ -7,8 +7,8 @@ import hudson.util.ArgumentListBuilder;
  */
 public class LoadCommand extends AbstractCommand {
 
-    public LoadCommand(JazzConfigurationProvider jazzClient) {
-        super(jazzClient);
+    public LoadCommand(JazzConfigurationProvider configurationProvider) {
+        super(configurationProvider);
     }
 
     public ArgumentListBuilder getArguments() {
