@@ -1,0 +1,8 @@
+com.ibm.team.filesystem.cli.client, version 2.0.2.I201005061337
+ Subcommands: load login logout create create/workspace create/baseline create/changeset create/snapshot create/component changeset changeset/comment changeset/close changeset/relocate changeset/associate changeset/disassociate changeset/suspend changeset/resume daemon daemon/start daemon/stop change-target change-target/workspace change-target/component list list/workspaces list/projectareas list/teamareas list/streams list/components list/remotefiles list/credentials list/daemons list/snapshots list/locks list/properties checkin accept deliver status conflicts resolve move lastmod share discard undo compare history diff repair workspace workspace/add-components workspace/remove-components workspace/replace-components property property/list property/get property/set lock lock/list lock/acquire lock/release annotate
+
+com.ibm.team.filesystem.cli.tools, version 2.0.2.I200910232005
+ Subcommands: tools.verify tools.validate tools.echo.stdin tools.configvalue
+
+com.ibm.team.filesystem.cli.core, version 2.0.2.I201007081345
+ Subcommands: help version
