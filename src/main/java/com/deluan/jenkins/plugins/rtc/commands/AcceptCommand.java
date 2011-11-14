@@ -53,7 +53,6 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
         Matcher matcher;
 
         while ((line = reader.readLine()) != null) {
-
             if ((matcher = startChangesetPattern.matcher(line)).matches()) {
                 if (changeSet != null) {
                     result.put(changeSet.getRev(), changeSet);
@@ -62,17 +61,8 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
                 changeSet.setRev(matcher.group(1));
             } else if ((matcher = filePattern.matcher(line)).matches()) {
                 assert changeSet != null;
-                String path = matcher.group(2).replaceAll("\\\\", "/").trim();
-                if (path.startsWith("/")) {
-                    path = path.substring(1);
-                }
-                String action = EditType.EDIT.getName();
-                String flag = matcher.group(1).substring(2, 3);
-                if ("a".equals(flag)) {
-                    action = EditType.ADD.getName();
-                } else if ("d".equals(flag)) {
-                    action = EditType.DELETE.getName();
-                }
+                String action = parseAction(matcher.group(1));
+                String path = parsePath(matcher.group(2));
                 changeSet.addItem(path, action);
             } else if ((matcher = workItemPattern.matcher(line)).matches()) {
                 assert changeSet != null;
@@ -85,6 +75,25 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
         }
 
         return result;
+    }
+
+    private String parsePath(String string) {
+        String path = string.replaceAll("\\\\", "/").trim();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        return path;
+    }
+
+    private String parseAction(String string) {
+        String flag = string.substring(2, 3);
+        String action = EditType.EDIT.getName();
+        if ("a".equals(flag)) {
+            action = EditType.ADD.getName();
+        } else if ("d".equals(flag)) {
+            action = EditType.DELETE.getName();
+        }
+        return action;
     }
 
 }
