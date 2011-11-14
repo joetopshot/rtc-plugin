@@ -1,0 +1,2 @@
+(1625) "|Marcos|marcos@email.com.br|" <No comment> "|2011-10-31-11:36:36|"
+(1640) "|Pedro|pedro.modrach@email.com.br|" Criacao da tela de cadastro de oferta "|2011-10-31-16:56:23|"

@@ -48,12 +48,11 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
         while ((line = reader.readLine()) != null) {
             JazzChangeSet changeSet = new JazzChangeSet();
             String[] parts = line.split("\\|");
-            String rev = parts[0].trim().substring(1);
-            rev = rev.substring(0, rev.length() - 1);
+            String rev = parseRevisionNumber(parts[0]);
             changeSet.setRev(rev);
             changeSet.setUser(parts[1].trim());
             changeSet.setEmail(parts[2].trim());
-            changeSet.setMsg(parts[3].trim());
+            changeSet.setMsg(parseMessage(parts[3]));
             try {
                 changeSet.setDate(sdf.parse(parts[4].trim()));
             } catch (ParseException e) {
@@ -63,6 +62,22 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
         }
 
         return result;
+    }
+
+    private String parseRevisionNumber(String part) {
+        String rev = part.trim();
+        int closingParenthesis = rev.indexOf(')');
+        rev = rev.substring(1, closingParenthesis);
+        return rev;
+    }
+
+    private String parseMessage(String string) {
+        String msg = string.trim();
+        if (msg.startsWith("\"")) {
+            int closingQuotes = msg.lastIndexOf("\"");
+            msg = msg.substring(1, closingQuotes).trim();
+        }
+        return msg;
     }
 
 }
