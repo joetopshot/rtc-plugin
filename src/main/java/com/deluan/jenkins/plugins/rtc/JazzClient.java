@@ -115,11 +115,11 @@ public class JazzClient implements JazzConfigurationProvider {
         Map<String, JazzChangeSet> compareCmdResults = compare();
 
         if (!compareCmdResults.isEmpty()) {
-            Map<String, JazzChangeSet> listCmdResults = accept(compareCmdResults.keySet());
+            Map<String, JazzChangeSet> acceptCmdResult = accept(compareCmdResults.keySet());
 
             for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
                 JazzChangeSet changeSet1 = entry.getValue();
-                JazzChangeSet changeSet2 = listCmdResults.get(entry.getKey());
+                JazzChangeSet changeSet2 = acceptCmdResult.get(entry.getKey());
                 changeSet1.copyItemsFrom(changeSet2);
             }
         }

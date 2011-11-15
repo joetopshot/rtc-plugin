@@ -8,9 +8,9 @@ import hudson.scm.EditType;
 public class AcceptOldOutputParser extends BaseAcceptOutputParser {
 
     public AcceptOldOutputParser() {
-        super("^\\s{7}\\((\\d+)\\)\\s(.*)$",
-                "^\\s{11}(.{3})\\s+(.*)$",
-                "^\\s{11}\\((\\d+)\\)\\s+(.*)$");
+        super("^\\s{8}\\((\\d+)\\)\\s(.*)$",
+                "^\\s{12}(.{3})\\s+(.*)$",
+                "^\\s{12}\\((\\d+)\\)\\s+(.*)$");
     }
 
     protected String parseWorkItem(String string) {
