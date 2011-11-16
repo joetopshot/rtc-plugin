@@ -1,6 +1,7 @@
 package com.deluan.jenkins.plugins.rtc.commands.accept;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
+import hudson.scm.EditType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,6 +59,8 @@ abstract public class BaseAcceptOutputParser {
 
     abstract protected String parseWorkItem(String string);
 
+    abstract protected String parseEditFlag(String string);
+
     protected String parsePath(String string) {
         String path = string.replaceAll("\\\\", "/").trim();
         if (path.startsWith("/")) {
@@ -66,6 +69,16 @@ abstract public class BaseAcceptOutputParser {
         return path;
     }
 
-    protected abstract String parseAction(String string);
+    protected String parseAction(String string) {
+        String flag = parseEditFlag(string);
+        String action = EditType.EDIT.getName();
+        if ("a".equals(flag)) {
+            action = EditType.ADD.getName();
+        } else if ("d".equals(flag)) {
+            action = EditType.DELETE.getName();
+        }
+        return action;
+    }
+
 
 }
