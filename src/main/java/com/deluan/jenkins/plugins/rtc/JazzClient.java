@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class JazzClient implements JazzConfigurationProvider {
     public static final String SCM_CMD = "scm";
 
-    private static final int TIMEOUT = 60 * 5; // in seconds
+    private static final int TIMEOUT = 60 * 60; // in seconds
 
 
     private final ArgumentListBuilder base;
