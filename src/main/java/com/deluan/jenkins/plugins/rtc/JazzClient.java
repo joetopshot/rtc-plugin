@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class JazzClient implements JazzConfigurationProvider {
     public static final String SCM_CMD = "scm";
 
-    private static final int TIMEOUT = 60 * 5; // in seconds
+    private static final int DEFAULT_TIMEOUT = 60 * 10; // in seconds
 
 
     private final ArgumentListBuilder base;
@@ -81,7 +81,7 @@ public class JazzClient implements JazzConfigurationProvider {
     public boolean load() throws IOException, InterruptedException {
         Command cmd = new LoadCommand(this);
 
-        return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
+        return (joinWithPossibleTimeout(run(cmd.getArguments()), DEFAULT_TIMEOUT * 3, listener) == 0);
     }
 
     /**
@@ -101,7 +101,7 @@ public class JazzClient implements JazzConfigurationProvider {
 
         args.add(new StopDaemonCommand(this).getArguments().toCommandArray());
 
-        return (joinWithPossibleTimeout(l(args), true, listener) == 0);
+        return (joinWithPossibleTimeout(l(args), DEFAULT_TIMEOUT, listener) == 0);
     }
 
     /**
@@ -172,8 +172,8 @@ public class JazzClient implements JazzConfigurationProvider {
         return l(seed().add(args.toCommandArray()));
     }
 
-    private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {
-        return useTimeout ? proc.start().joinWithTimeout(TIMEOUT, TimeUnit.SECONDS, listener) : proc.join();
+    private int joinWithPossibleTimeout(ProcStarter proc, Integer timeout, final TaskListener listener) throws IOException, InterruptedException {
+        return proc.start().joinWithTimeout(timeout, TimeUnit.SECONDS, listener);
     }
 
     /**
@@ -189,7 +189,7 @@ public class JazzClient implements JazzConfigurationProvider {
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
-        if (joinWithPossibleTimeout(run(args).stdout(fos), true, listener) == 0) {
+        if (joinWithPossibleTimeout(run(args).stdout(fos), DEFAULT_TIMEOUT, listener) == 0) {
             o.flush();
             return baos;
         } else {
