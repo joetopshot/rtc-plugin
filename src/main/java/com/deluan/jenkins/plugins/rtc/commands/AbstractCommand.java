@@ -16,10 +16,12 @@ public abstract class AbstractCommand implements Command {
 
     protected ArgumentListBuilder addLoginArgument(ArgumentListBuilder arguments) {
         if (StringUtils.isNotBlank(config.getUsername())) {
-            arguments.add("-u", config.getUsername());
+            arguments.add("-u");
+            arguments.addMasked(config.getUsername());
         }
         if (StringUtils.isNotBlank(config.getPassword())) {
-            arguments.add("-P", config.getPassword());
+            arguments.add("-P");
+            arguments.addMasked(config.getPassword());
         }
 
         return arguments;

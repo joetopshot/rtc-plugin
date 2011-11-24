@@ -30,10 +30,9 @@ public class JazzClient implements JazzConfigurationProvider {
 
     private static final int TIMEOUT = 60 * 60; // in seconds
 
-
-    private final ArgumentListBuilder base;
     private final Launcher launcher;
     private final TaskListener listener;
+    private String jazzExecutable;
     private String repositoryLocation;
     private String workspaceName;
     private String streamName;
@@ -45,7 +44,7 @@ public class JazzClient implements JazzConfigurationProvider {
     public JazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
                       String user, String password, String repositoryLocation,
                       String streamName, String workspaceName) {
-        base = new ArgumentListBuilder(jazzExecutable);
+        this.jazzExecutable = jazzExecutable;
         this.launcher = launcher;
         this.listener = listener;
         this.username = user;
@@ -159,17 +158,14 @@ public class JazzClient implements JazzConfigurationProvider {
         return result;
     }
 
-    private ArgumentListBuilder seed() {
-        return base.clone();
-    }
-
     private ProcStarter l(ArgumentListBuilder args) {
         // set the default stdout
         return launcher.launch().cmds(args).stdout(listener);
     }
 
     private ProcStarter run(ArgumentListBuilder args) {
-        return l(seed().add(args.toCommandArray()));
+        ArgumentListBuilder cmd = args.clone().prepend(jazzExecutable);
+        return l(cmd);
     }
 
     private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {

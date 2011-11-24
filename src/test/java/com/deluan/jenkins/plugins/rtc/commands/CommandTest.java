@@ -2,15 +2,25 @@ package com.deluan.jenkins.plugins.rtc.commands;
 
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.scm.EditType;
+import hudson.util.ArgumentListBuilder;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 public class CommandTest extends BaseCommandTest {
+
+    @Test
+    public void maskedLoginCredentials() throws Exception {
+        LoadCommand cmd = new LoadCommand(config);
+
+        ArgumentListBuilder args = cmd.getArguments();
+        assertThat(args.toMaskArray(), is(equalTo(new boolean[]{false, false, false, true, false, true, false, false, false, false, false})));
+    }
 
     @Test
     public void loadCommandArguments() throws Exception {
