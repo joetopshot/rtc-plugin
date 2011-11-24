@@ -18,7 +18,7 @@ public class CompareCommandTest extends BaseCommandTest {
 
     @Test
     public void compareCommandParse() throws Exception {
-        Map<String, JazzChangeSet> result = callParser(new CompareCommand(config), "scm-compare.txt", 9, TEST_REVISIONS);
+        Map<String, JazzChangeSet> result = callParser(new CompareCommand(config), "scm-compare.txt", TEST_REVISIONS);
 
         JazzChangeSet changeSet = result.get("1657");
         assertEquals("Roberto", changeSet.getUser());
@@ -29,7 +29,7 @@ public class CompareCommandTest extends BaseCommandTest {
 
     @Test
     public void compareCommandParseUnix() throws Exception {
-        Map<String, JazzChangeSet> result = callParser(new CompareCommand(config), "scm-compare-unix.txt", 2, new String[]{"1625", "1640"});
+        Map<String, JazzChangeSet> result = callParser(new CompareCommand(config), "scm-compare-unix.txt", "1625", "1640");
 
         JazzChangeSet changeSet = result.get("1640");
         assertEquals("Pedro", changeSet.getUser());

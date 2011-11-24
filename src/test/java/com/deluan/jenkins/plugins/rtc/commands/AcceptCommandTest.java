@@ -40,7 +40,7 @@ public class AcceptCommandTest extends BaseCommandTest {
     @Test
     public void acceptCommandParse_2_1_0() throws Exception {
         AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS), "2.1.0");
-        Map<String, JazzChangeSet> result = callParser(cmd, "scm-accept-2.1.0.txt", 9, TEST_REVISIONS);
+        Map<String, JazzChangeSet> result = callParser(cmd, "scm-accept-2.1.0.txt", TEST_REVISIONS);
 
         JazzChangeSet changeSet = result.get("1714");
         assertEquals("The number of files in the changesets was incorrect", 8, changeSet.getAffectedPaths().size());
@@ -61,7 +61,7 @@ public class AcceptCommandTest extends BaseCommandTest {
     @Test
     public void acceptCommandParse_2_0_2() throws Exception {
         AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS), "2.0.2");
-        Map<String, JazzChangeSet> result = callParser(cmd, "scm-accept-2.0.2.txt", 4, new String[]{"1002", "1001", "1008", "1009"});
+        Map<String, JazzChangeSet> result = callParser(cmd, "scm-accept-2.0.2.txt", "1002", "1001", "1008", "1009");
 
         JazzChangeSet changeSet = result.get("1002");
         assertEquals("The number of files in the changesets was incorrect", 5, changeSet.getAffectedPaths().size());

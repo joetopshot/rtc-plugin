@@ -32,12 +32,12 @@ abstract public class BaseCommandTest {
         when(config.getJobWorkspace()).thenReturn(new FilePath(new File("c:\\test")));
     }
 
-    protected Map<String, JazzChangeSet> callParser(ParseableCommand<Map<String, JazzChangeSet>> cmd, String fileName, int sizeExpected, String[] revisionsExpected) throws ParseException, IOException {
+    protected Map<String, JazzChangeSet> callParser(ParseableCommand<Map<String, JazzChangeSet>> cmd, String fileName, String... revisionsExpected) throws ParseException, IOException {
         BufferedReader reader = getReader(fileName);
 
         Map<String, JazzChangeSet> result = cmd.parse(reader);
 
-        assertEquals("The number of change sets in the list was incorrect", sizeExpected, result.size());
+        assertEquals("The number of change sets in the list was incorrect", revisionsExpected.length, result.size());
 
         for (String rev : revisionsExpected) {
             assertNotNull("Change set (" + rev + ") not in result", result.get(rev));

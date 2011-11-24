@@ -36,7 +36,7 @@ public class CommandTest extends BaseCommandTest {
     @Test
     public void listCommandParse() throws Exception {
         ListCommand cmd = new ListCommand(config, Arrays.asList(TEST_REVISIONS));
-        Map<String, JazzChangeSet> result = callParser(cmd, "scm-list.txt", 9, TEST_REVISIONS);
+        Map<String, JazzChangeSet> result = callParser(cmd, "scm-list.txt", TEST_REVISIONS);
 
         JazzChangeSet changeSet = result.get("1714");
         assertEquals("The number of files in the changesets was incorrect", 8, changeSet.getAffectedPaths().size());
