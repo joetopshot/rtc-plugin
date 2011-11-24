@@ -65,10 +65,7 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
     }
 
     private String parseRevisionNumber(String part) {
-        String rev = part.trim();
-        int closingParenthesis = rev.indexOf(')');
-        rev = rev.substring(1, closingParenthesis);
-        return rev;
+        return part.replaceAll("[^0-9]", "");
     }
 
     private String parseMessage(String string) {

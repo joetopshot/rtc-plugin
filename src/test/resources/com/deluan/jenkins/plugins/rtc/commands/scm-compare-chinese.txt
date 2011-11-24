@@ -1,0 +1,3 @@
+£¨1018£© |Jacky An|jacky.an@email.com| <no comment> |2011-11-22-13:18:04|
+£¨1019£© |Jack Li|jack.li@email.com| follow change get var value from runtime to config value |2011-11-23-10:01:11|
+£¨1020£© |Jack Li|jack.li@email.com| follow change get var value from runtime to config value |2011-11-23-10:01:11|

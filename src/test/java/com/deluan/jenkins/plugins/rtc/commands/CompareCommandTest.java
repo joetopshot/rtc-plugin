@@ -38,4 +38,15 @@ public class CompareCommandTest extends BaseCommandTest {
         assertEquals("2011-10-31-16:56:23", changeSet.getDateStr());
     }
 
+    @Test
+    public void compareCommandParseChinese() throws Exception {
+        Map<String, JazzChangeSet> result = callParser(new CompareCommand(config), "scm-compare-chinese.txt", "1018", "1019", "1020");
+
+        JazzChangeSet changeSet = result.get("1019");
+        assertEquals("Jack Li", changeSet.getUser());
+        assertEquals("jack.li@email.com", changeSet.getEmail());
+        assertEquals("follow change get var value from runtime to config value", changeSet.getMsg());
+        assertEquals("2011-11-23-10:01:11", changeSet.getDateStr());
+    }
+
 }
