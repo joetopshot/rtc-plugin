@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.*;
 
 public class AcceptCommandTest extends BaseCommandTest {
@@ -55,7 +56,24 @@ public class AcceptCommandTest extends BaseCommandTest {
         assertEquals("The edit type is not the expected one", EditType.ADD, item.getEditType());
 
         String workItem = changeSet.getWorkItems().get(0);
-        assertTrue("The work item is not the expected one", workItem.startsWith("516"));
+        assertThat("The work item is not the expected one", workItem, startsWith("516"));
+    }
+
+    @Test
+    public void acceptCommandParse_Chinese() throws Exception {
+        AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS), "2.0.2");
+        Map<String, JazzChangeSet> result = callParser(cmd, "scm-accept-chinese.txt", "1019", "1021", "1020");
+
+        JazzChangeSet changeSet = result.get("1020");
+        assertEquals("The number of files in the changesets was incorrect", 2, changeSet.getAffectedPaths().size());
+        assertEquals("The number of work itens in the changesets was incorrect", 1, changeSet.getWorkItems().size());
+
+        JazzChangeSet.Item item = changeSet.getItems().get(0);
+        assertTrue("The file is not the expected one", item.getPath().endsWith("com_tps_eppic_ConfigValues_core_properties"));
+        assertEquals("The edit type is not the expected one", EditType.EDIT, item.getEditType());
+
+        String workItem = changeSet.getWorkItems().get(0);
+        assertThat("The work item is not the expected one", workItem, startsWith("11764"));
     }
 
     @Test

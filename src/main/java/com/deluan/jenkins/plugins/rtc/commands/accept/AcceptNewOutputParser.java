@@ -6,9 +6,9 @@ package com.deluan.jenkins.plugins.rtc.commands.accept;
 public class AcceptNewOutputParser extends BaseAcceptOutputParser {
 
     public AcceptNewOutputParser() {
-        super("^\\s{8}\\((\\d+)\\)\\s*---[$]\\s*(\\D*)\\s+(.*)$",
+        super("^\\s{8}[^\\d\\s]+(\\d+)[^\\d]+\\s(.*)$",
                 "^\\s{12}(.{5})\\s+(.*)$",
-                "^\\s{12}\\((\\d+)\\)\\s+(.*)$");
+                "^\\s{12}[^\\d\\s]+(\\d+)[^\\d]+(.*)$");
     }
 
     @Override

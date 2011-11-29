@@ -1,0 +1,22 @@
+Repository£ºhttps://10.120.69.173:9443/jazz/
+  Workspace£º£¨1022£©¡°GOIntegrationWp¡±
+    Component£º£¨1023£©¡°app¡±
+      Change sets£º
+        £¨1019£© Jack Li --$ ¡°follow change get var value from runtime to config value¡±
+		  Changes£º
+            --c \project\app\config\com\tps\config\runtime.properties
+          Work item£º
+            £¨1024£©¡°11764: merge work item10618¡±
+        £¨1021£© Peter Xia --$ ¡°fix a defect in sql¡±
+          Changes£º
+            --c \project\app\database\EDCGO\INSERTS.SQL
+          Work item£º
+            £¨1025£©¡°11762: EPCGO--update transaction type group for online pa...¡±
+    Component£º£¨1012£©¡°core¡±
+      Change sets£º
+        £¨1020£© Jack Li --$ ¡°follow change get var value from runtime to config value¡±
+          Changes£º
+            --c \core\config\com\tps\config\com_tps_eppic_ConfigValues_core_properties
+            --c \core\src\com\acs\report\ReportExecute.java
+          Work item£º
+            £¨1024£©¡°11764: merge work item10618¡±
