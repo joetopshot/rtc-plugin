@@ -11,6 +11,7 @@ import hudson.model.*;
 import hudson.scm.*;
 import hudson.util.FormValidation;
 import hudson.util.LogTaskListener;
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -21,6 +22,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static hudson.Util.fixEmpty;
 
 /**
  * @author deluan
@@ -34,7 +37,7 @@ public class JazzSCM extends SCM {
     private String workspaceName;
     private String streamName;
     private String username;
-    private String password;
+    private Secret password;
 
     private JazzRepositoryBrowser repositoryBrowser;
 
@@ -46,7 +49,7 @@ public class JazzSCM extends SCM {
         this.workspaceName = workspaceName;
         this.streamName = streamName;
         this.username = username;
-        this.password = password;
+        this.password = fixEmpty(password)!=null ? Secret.fromString(password) : null;
     }
 
     public String getRepositoryLocation() {
@@ -66,12 +69,12 @@ public class JazzSCM extends SCM {
     }
 
     public String getPassword() {
-        return password;
+        return Secret.toString(password);
     }
 
     private JazzClient getClientInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
         return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(),
-                username, password, repositoryLocation, streamName, workspaceName);
+                username, getPassword(), repositoryLocation, streamName, workspaceName);
     }
 
     @Override
