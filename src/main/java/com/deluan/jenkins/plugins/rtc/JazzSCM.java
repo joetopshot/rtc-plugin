@@ -13,6 +13,7 @@ import hudson.util.FormValidation;
 import hudson.util.LogTaskListener;
 import hudson.util.Secret;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -22,8 +23,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static hudson.Util.fixEmpty;
 
 /**
  * @author deluan
@@ -49,7 +48,7 @@ public class JazzSCM extends SCM {
         this.workspaceName = workspaceName;
         this.streamName = streamName;
         this.username = username;
-        this.password = fixEmpty(password)!=null ? Secret.fromString(password) : null;
+        this.password = StringUtils.isEmpty(password) ? null : Secret.fromString(password);
     }
 
     public String getRepositoryLocation() {
