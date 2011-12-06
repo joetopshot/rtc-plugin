@@ -73,7 +73,7 @@ public class JazzSCM extends SCM {
 
     private JazzClient getClientInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
         return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(),
-                username, getPassword(), repositoryLocation, streamName, workspaceName);
+                getConfiguration());
     }
 
     @Override
@@ -141,6 +141,17 @@ public class JazzSCM extends SCM {
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
+    }
+
+    public JazzConfiguration getConfiguration() {
+        JazzConfiguration configuration = new JazzConfiguration();
+        configuration.setUsername(username);
+        configuration.setPassword(Secret.toString(password));
+        configuration.setRepositoryLocation(repositoryLocation);
+        configuration.setStreamName(streamName);
+        configuration.setWorkspaceName(workspaceName);
+
+        return configuration;
     }
 
     @Extension

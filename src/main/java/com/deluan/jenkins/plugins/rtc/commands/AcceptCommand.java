@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import com.deluan.jenkins.plugins.rtc.commands.accept.AcceptNewOutputParser;
 import com.deluan.jenkins.plugins.rtc.commands.accept.AcceptOldOutputParser;
@@ -23,7 +24,7 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
     private BaseAcceptOutputParser parser;
     protected boolean oldFormat = false;
 
-    public AcceptCommand(JazzConfigurationProvider configurationProvider, Collection<String> changeSets, String version) {
+    public AcceptCommand(JazzConfiguration configurationProvider, Collection<String> changeSets, String version) {
         super(configurationProvider);
         this.changeSets = new LinkedHashSet<String>(changeSets);
         this.oldFormat = (version.compareTo(NEW_FORMAT_VERSION) < 0);

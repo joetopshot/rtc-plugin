@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.util.ArgumentListBuilder;
 
@@ -22,7 +23,7 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
     private static final String CONTRIBUTOR_FORMAT = "|{name}|{email}|";
     private final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 
-    public CompareCommand(JazzConfigurationProvider configurationProvider) {
+    public CompareCommand(JazzConfiguration configurationProvider) {
         super(configurationProvider);
     }
 
@@ -46,19 +47,23 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
 
         String line;
         while ((line = reader.readLine()) != null) {
-            JazzChangeSet changeSet = new JazzChangeSet();
-            String[] parts = line.split("\\|");
-            String rev = parseRevisionNumber(parts[0]);
-            changeSet.setRev(rev);
-            changeSet.setUser(parts[1].trim());
-            changeSet.setEmail(parts[2].trim());
-            changeSet.setMsg(parseMessage(parts[3]));
             try {
-                changeSet.setDate(sdf.parse(parts[4].trim()));
-            } catch (ParseException e) {
-                logger.log(Level.WARNING, "Error parsing date '" + parts[4].trim() + "' for revision (" + rev + ")");
+                JazzChangeSet changeSet = new JazzChangeSet();
+                String[] parts = line.split("\\|");
+                String rev = parseRevisionNumber(parts[0]);
+                changeSet.setRev(rev);
+                changeSet.setUser(parts[1].trim());
+                changeSet.setEmail(parts[2].trim());
+                changeSet.setMsg(parseMessage(parts[3]));
+                try {
+                    changeSet.setDate(sdf.parse(parts[4].trim()));
+                } catch (ParseException e) {
+                    logger.log(Level.WARNING, "Error parsing date '" + parts[4].trim() + "' for revision (" + rev + ")");
+                }
+                result.put(rev, changeSet);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Error parsing compare output:\n\n" + line + "\n\n", e);
             }
-            result.put(rev, changeSet);
         }
 
         return result;

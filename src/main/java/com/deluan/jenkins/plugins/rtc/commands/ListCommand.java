@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.scm.EditType;
 import hudson.util.ArgumentListBuilder;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 public class ListCommand extends AbstractCommand implements ParseableCommand<Map<String, JazzChangeSet>> {
     private Collection<String> changeSets;
 
-    public ListCommand(JazzConfigurationProvider configurationProvider, Collection<String> changeSets) {
+    public ListCommand(JazzConfiguration configurationProvider, Collection<String> changeSets) {
         super(configurationProvider);
         this.changeSets = new LinkedHashSet<String>(changeSets);
     }

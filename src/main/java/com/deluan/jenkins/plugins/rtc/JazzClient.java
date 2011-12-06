@@ -25,34 +25,23 @@ import java.util.concurrent.TimeUnit;
  * @author deluan
  */
 @SuppressWarnings("JavaDoc")
-public class JazzClient implements JazzConfigurationProvider {
+public class JazzClient {
     public static final String SCM_CMD = "scm";
 
     private static final int TIMEOUT = 60 * 60; // in seconds
 
+    private JazzConfiguration configuration = new JazzConfiguration();
     private final Launcher launcher;
     private final TaskListener listener;
     private String jazzExecutable;
-    private String repositoryLocation;
-    private String workspaceName;
-    private String streamName;
-    private String username;
-    private String password;
-    private FilePath jobWorkspace;
-
 
     public JazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
-                      String user, String password, String repositoryLocation,
-                      String streamName, String workspaceName) {
+                      JazzConfiguration configuration) {
         this.jazzExecutable = jazzExecutable;
         this.launcher = launcher;
         this.listener = listener;
-        this.username = user;
-        this.password = password;
-        this.repositoryLocation = repositoryLocation;
-        this.streamName = streamName;
-        this.workspaceName = workspaceName;
-        this.jobWorkspace = jobWorkspace;
+        this.configuration = configuration.clone();
+        this.configuration.setJobWorkspace(jobWorkspace);
     }
 
     /**
@@ -78,7 +67,7 @@ public class JazzClient implements JazzConfigurationProvider {
      * @throws InterruptedException
      */
     public boolean load() throws IOException, InterruptedException {
-        Command cmd = new LoadCommand(this);
+        Command cmd = new LoadCommand(configuration);
 
         return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
     }
@@ -98,7 +87,7 @@ public class JazzClient implements JazzConfigurationProvider {
     public boolean stopDaemon() throws IOException, InterruptedException {
         ArgumentListBuilder args = new ArgumentListBuilder(SCM_CMD);
 
-        args.add(new StopDaemonCommand(this).getArguments().toCommandArray());
+        args.add(new StopDaemonCommand(configuration).getArguments().toCommandArray());
 
         return (joinWithPossibleTimeout(l(args), true, listener) == 0);
     }
@@ -127,18 +116,18 @@ public class JazzClient implements JazzConfigurationProvider {
     }
 
     private String getVersion() throws IOException, InterruptedException {
-        VersionCommand cmd = new VersionCommand(this);
+        VersionCommand cmd = new VersionCommand(configuration);
         return execute(cmd);
     }
 
     private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
         String version = getVersion(); // TODO The version should be checked when configuring the Jazz Executable
-        AcceptCommand cmd = new AcceptCommand(this, changeSets, version);
+        AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version);
         return execute(cmd);
     }
 
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
-        CompareCommand cmd = new CompareCommand(this);
+        CompareCommand cmd = new CompareCommand(configuration);
         return execute(cmd);
     }
 
@@ -193,29 +182,4 @@ public class JazzClient implements JazzConfigurationProvider {
             throw new AbortException();
         }
     }
-
-    public String getRepositoryLocation() {
-        return repositoryLocation;
-    }
-
-    public String getWorkspaceName() {
-        return workspaceName;
-    }
-
-    public String getStreamName() {
-        return streamName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public FilePath getJobWorkspace() {
-        return jobWorkspace;
-    }
-
 }

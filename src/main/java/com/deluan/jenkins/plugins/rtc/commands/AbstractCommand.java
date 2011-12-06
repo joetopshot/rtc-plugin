@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import hudson.util.ArgumentListBuilder;
 import org.apache.commons.lang.StringUtils;
 
@@ -8,9 +9,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractCommand implements Command {
 
-    private final JazzConfigurationProvider config;
+    private final JazzConfiguration config;
 
-    public AbstractCommand(JazzConfigurationProvider configurationProvider) {
+    public AbstractCommand(JazzConfiguration configurationProvider) {
         this.config = configurationProvider;
     }
 
@@ -36,7 +37,7 @@ public abstract class AbstractCommand implements Command {
         return args.add(getConfig().getJobWorkspace());
     }
 
-    public JazzConfigurationProvider getConfig() {
+    protected JazzConfiguration getConfig() {
         return config;
     }
 }

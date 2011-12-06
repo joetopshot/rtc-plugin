@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import hudson.util.ArgumentListBuilder;
 
 import java.io.BufferedReader;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
  * @author deluan
  */
 public class VersionCommand extends AbstractCommand implements ParseableCommand<String> {
-    public VersionCommand(JazzConfigurationProvider configurationProvider) {
+    public VersionCommand(JazzConfiguration configurationProvider) {
         super(configurationProvider);
     }
 

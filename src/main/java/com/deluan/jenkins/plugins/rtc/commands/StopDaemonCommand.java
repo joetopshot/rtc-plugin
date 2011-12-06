@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import hudson.util.ArgumentListBuilder;
 
 /**
@@ -7,7 +8,7 @@ import hudson.util.ArgumentListBuilder;
  */
 public class StopDaemonCommand extends AbstractCommand {
 
-    public StopDaemonCommand(JazzConfigurationProvider configurationProvider) {
+    public StopDaemonCommand(JazzConfiguration configurationProvider) {
         super(configurationProvider);
     }
 

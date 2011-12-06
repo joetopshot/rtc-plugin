@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
 import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.FilePath;
 import org.junit.Before;
@@ -10,8 +11,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author deluan
@@ -19,17 +18,17 @@ import static org.mockito.Mockito.when;
 abstract public class BaseCommandTest {
 
     protected static final String[] TEST_REVISIONS = new String[]{"1714", "1657", "1652", "1651", "1650", "1648", "1645", "1640", "1625"};
-    protected JazzConfigurationProvider config;
+    protected JazzConfiguration config;
 
     @Before
     public void setUp() {
-        config = mock(JazzConfigurationProvider.class);
-        when(config.getRepositoryLocation()).thenReturn("https://jazz/jazz");
-        when(config.getWorkspaceName()).thenReturn("My Workspace");
-        when(config.getStreamName()).thenReturn("My Stream");
-        when(config.getUsername()).thenReturn("user");
-        when(config.getPassword()).thenReturn("password");
-        when(config.getJobWorkspace()).thenReturn(new FilePath(new File("c:\\test")));
+        config = new JazzConfiguration();
+        config.setRepositoryLocation("https://jazz/jazz");
+        config.setWorkspaceName("My Workspace");
+        config.setStreamName("My Stream");
+        config.setUsername("user");
+        config.setPassword("password");
+        config.setJobWorkspace(new FilePath(new File("c:\\test")));
     }
 
     protected Map<String, JazzChangeSet> callParser(ParseableCommand<Map<String, JazzChangeSet>> cmd, String fileName, String... revisionsExpected) throws ParseException, IOException {
