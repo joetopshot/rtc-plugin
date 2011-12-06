@@ -37,15 +37,28 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
         args.add("accept");
         addLoginArgument(args);
         addLocalWorkspaceArgument(args);
+        addSourceStream(args);
         args.add("--flow-components", "-o", "-v");
-        if (changeSets != null && !changeSets.isEmpty()) {
-            args.add("-c");
-            for (String changeSet : changeSets) {
-                args.add(changeSet);
-            }
+        if (hasAnyChangeSets()) {
+            addChangeSets(args);
         }
 
         return args;
+    }
+
+    private void addSourceStream(ArgumentListBuilder args) {
+        args.add("-s", getConfig().getStreamName());
+    }
+
+    private boolean hasAnyChangeSets() {
+        return changeSets != null && !changeSets.isEmpty();
+    }
+
+    private void addChangeSets(ArgumentListBuilder args) {
+        args.add("-c");
+        for (String changeSet : changeSets) {
+            args.add(changeSet);
+        }
     }
 
     public Map<String, JazzChangeSet> parse(BufferedReader reader) throws ParseException, IOException {

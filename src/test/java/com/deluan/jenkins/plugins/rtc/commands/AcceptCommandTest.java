@@ -17,7 +17,7 @@ public class AcceptCommandTest extends BaseCommandTest {
     public void acceptCommandArguments() throws Exception {
         AcceptCommand cmd = new AcceptCommand(config, Arrays.asList(TEST_REVISIONS), "2.1.0");
 
-        assertEquals("accept -u user -P password -d c:\\test --flow-components -o -v -c 1714 1657 1652 1651 1650 1648 1645 1640 1625", cmd.getArguments().toStringWithQuote());
+        assertEquals("accept -u user -P password -d c:\\test -s \"My Stream\" --flow-components -o -v -c 1714 1657 1652 1651 1650 1648 1645 1640 1625", cmd.getArguments().toStringWithQuote());
     }
 
     @Test
