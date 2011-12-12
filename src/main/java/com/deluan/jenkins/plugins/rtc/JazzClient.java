@@ -13,6 +13,7 @@ import hudson.util.ForkOutputStream;
 import org.kohsuke.stapler.framework.io.WriterOutputStream;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -170,7 +171,7 @@ public class JazzClient {
         // scm produces text in the platform default encoding, so we need to convert it back to UTF-8
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         WriterOutputStream o = new WriterOutputStream(new OutputStreamWriter(baos, "UTF-8"),
-                Computer.currentComputer().getDefaultCharset());
+                getDefaultCharset());
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
@@ -180,6 +181,15 @@ public class JazzClient {
         } else {
             listener.error("Failed to run " + args.toStringWithQuote());
             throw new AbortException();
+        }
+    }
+
+    private Charset getDefaultCharset() {
+        // First check if we can get currentComputer. See issue JENKINS-11874
+        if (Computer.currentComputer() != null) {
+            return Computer.currentComputer().getDefaultCharset();
+        } else {
+            return Charset.forName("UTF-8");
         }
     }
 }
