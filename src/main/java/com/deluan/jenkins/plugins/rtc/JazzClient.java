@@ -97,7 +97,6 @@ public class JazzClient {
         String[] cmds = {"scm", "scm.exe", "scm.sh"};
         File file = new File(jazzExecutable);
         String installDir = file.getParent();
-        System.out.println("--------------->" + installDir);
         if (installDir != null) {
             for (String cmd : cmds) {
                 String fullCmdPath = installDir + '/' + cmd;

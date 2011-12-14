@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
 
 import java.io.File;
+import java.util.regex.Matcher;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -37,11 +38,16 @@ public class JazzClientTest {
         return spy(client);
     }
 
+    private String useSystemSeparator(String originalPath) {
+        String separator = Matcher.quoteReplacement(File.separator);
+        return originalPath.replaceAll("/", separator);
+    }
+
     @Test
     @Bug(12059)
     public void foundSCMExecutable() {
-        String installDir = "c:\\a\\bb\\ccc";
-        JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "\\lscm.bat");
+        String installDir = useSystemSeparator("/a/bb/ccc");
+        JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "/lscm.bat");
 
         doReturn(true).when(testClient).canExecute(installDir + "/scm.exe");
 
@@ -61,8 +67,8 @@ public class JazzClientTest {
 
     @Test
     public void useDefaultSCMExecutable() {
-        String installDir = "c:\\a\\bb\\ccc";
-        JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "\\lscm.bat");
+        String installDir = useSystemSeparator("/a/bb/ccc");
+        JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "/lscm.bat");
 
         String scmExecutable = testClient.findSCMExecutable();
 
