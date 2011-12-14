@@ -86,11 +86,28 @@ public class JazzClient {
      * @throws InterruptedException
      */
     public boolean stopDaemon() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder(SCM_CMD);
+        ArgumentListBuilder args = new ArgumentListBuilder(findSCMExecutable());
 
         args.add(new StopDaemonCommand(configuration).getArguments().toCommandArray());
 
         return (joinWithPossibleTimeout(l(args), true, listener) == 0);
+    }
+
+    protected String findSCMExecutable() {
+        String[] cmds = {"scm", "scm.exe", "scm.sh"};
+        File file = new File(jazzExecutable);
+        String installDir = file.getParent();
+        for (String cmd : cmds) {
+            String fullCmdPath = installDir + '/' + cmd;
+            if (canExecute(fullCmdPath)) {
+                return fullCmdPath;
+            }
+        }
+        return SCM_CMD;
+    }
+
+    protected boolean canExecute(String fullCmdPath) {
+        return new File(fullCmdPath).canExecute();
     }
 
     /**
