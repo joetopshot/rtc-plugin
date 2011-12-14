@@ -5,6 +5,7 @@ import hudson.Launcher;
 import hudson.model.TaskListener;
 import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.hudson.test.Bug;
 
 import java.io.File;
 
@@ -37,6 +38,7 @@ public class JazzClientTest {
     }
 
     @Test
+    @Bug(12059)
     public void foundSCMExecutable() {
         String installDir = "c:\\a\\bb\\ccc";
         JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "\\lscm.bat");
@@ -46,6 +48,15 @@ public class JazzClientTest {
         String scmExecutable = testClient.findSCMExecutable();
 
         assertThat(scmExecutable, is(installDir + "/scm.exe"));
+    }
+
+    @Test
+    public void jazzExecutableWithoutPath() {
+        JazzClient testClient = createTestableJazzClient(null, null, null, "lscm.bat");
+
+        String scmExecutable = testClient.findSCMExecutable();
+
+        assertThat(scmExecutable, is(JazzClient.SCM_CMD));
     }
 
     @Test
