@@ -10,6 +10,7 @@ import hudson.model.Computer;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import hudson.util.ForkOutputStream;
+import hudson.util.LogTaskListener;
 import org.kohsuke.stapler.framework.io.WriterOutputStream;
 
 import java.io.*;
@@ -19,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Encapsulates the invocation of RTC's SCM Command Line Interface, "scm".
@@ -29,15 +32,27 @@ import java.util.concurrent.TimeUnit;
 public class JazzClient {
     public static final String SCM_CMD = "scm";
 
+    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
+
     private static final int TIMEOUT = 60 * 60; // in seconds
 
     private JazzConfiguration configuration = new JazzConfiguration();
     private final Launcher launcher;
     private final TaskListener listener;
     private String jazzExecutable;
+    private String version;
 
-    public JazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
-                      JazzConfiguration configuration) {
+    public JazzClient(String jazzExecutable, FilePath jobWorkspace,
+                      JazzConfiguration configuration) throws IOException, InterruptedException {
+        FilePath executable = new FilePath(new File(jazzExecutable));
+        this.listener = new LogTaskListener(logger, Level.FINEST);
+        this.launcher = executable.createLauncher(listener);
+        this.jazzExecutable = jazzExecutable;
+        this.configuration = configuration.clone();
+        this.configuration.setJobWorkspace(jobWorkspace);
+    }
+
+    public JazzClient(String jazzExecutable, FilePath jobWorkspace, JazzConfiguration configuration, Launcher launcher, TaskListener listener) {
         this.jazzExecutable = jazzExecutable;
         this.launcher = launcher;
         this.listener = listener;
@@ -113,6 +128,23 @@ public class JazzClient {
     }
 
     /**
+     * Disable scm's version auto detection and use this specific version
+     *
+     * @param version
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getVersion() throws IOException, InterruptedException {
+        if (this.version == null) {
+            VersionCommand cmd = new VersionCommand(configuration);
+            this.version = execute(cmd);
+        }
+        return this.version;
+    }
+
+    /**
      * Call <tt>scm accept</tt> command.<p/>
      *
      * @return all changeSets accepted, complete with affected paths and related work itens
@@ -135,13 +167,8 @@ public class JazzClient {
         return new ArrayList<JazzChangeSet>(compareCmdResults.values());
     }
 
-    private String getVersion() throws IOException, InterruptedException {
-        VersionCommand cmd = new VersionCommand(configuration);
-        return execute(cmd);
-    }
-
     private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
-        String version = getVersion(); // TODO The version should be checked when configuring the Jazz Executable
+        String version = getVersion();
         AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version);
         return execute(cmd);
     }

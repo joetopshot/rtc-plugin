@@ -34,7 +34,7 @@ public class JazzClientTest {
     }
 
     private JazzClient createTestableJazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable) {
-        JazzClient client = new JazzClient(launcher, listener, jobWorkspace, jazzExecutable, config);
+        JazzClient client = new JazzClient(jazzExecutable, jobWorkspace, config, launcher, listener);
         return spy(client);
     }
 

@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 @SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {
 
-    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
+    private static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
 
     private String repositoryLocation;
     private String workspaceName;
@@ -39,6 +39,7 @@ public class JazzSCM extends SCM {
     private Secret password;
 
     private JazzRepositoryBrowser repositoryBrowser;
+    private String version;
 
     @DataBoundConstructor
     public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
@@ -71,9 +72,28 @@ public class JazzSCM extends SCM {
         return Secret.toString(password);
     }
 
+    private String getVersion() {
+        if (this.version == null) {
+            try {
+                JazzClient client = new JazzClient(getDescriptor().getJazzExecutable(), null, new JazzConfiguration());
+                this.version = client.getVersion();
+                logger.info("Detected scm version: " + this.version);
+            } catch (Exception e) {
+                logger.severe("Could not instantiate a JazzClient!");
+            }
+
+            if (this.version == null) {
+                throw new RuntimeException("Could not determine scm version!");
+            }
+        }
+
+        return this.version;
+    }
+
     private JazzClient getClientInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
-        return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(),
-                getConfiguration());
+        JazzClient client = new JazzClient(getDescriptor().getJazzExecutable(), jobWorkspace, getConfiguration(), launcher, listener);
+        client.setVersion(getVersion());
+        return client;
     }
 
     @Override
@@ -195,7 +215,22 @@ public class JazzSCM extends SCM {
         }
 
         public FormValidation doExecutableCheck(@QueryParameter String value) {
-            return FormValidation.validateExecutable(value);
+            return FormValidation.validateExecutable(value, new FormValidation.FileValidator() {
+                @Override
+                public FormValidation validate(File f) {
+                    String exePath = f.getAbsolutePath();
+                    try {
+                        JazzClient client = new JazzClient(exePath, null, new JazzConfiguration());
+                        String version = client.getVersion();
+                        if (version != null) {
+                            return FormValidation.ok("Version " + version + " found");
+                        }
+                    } catch (Exception e) {
+                        logger.log(Level.WARNING, "Error validating executable '" + exePath + "'", e);
+                    }
+                    return FormValidation.error("Couldn't execute '" + exePath + " version' command");
+                }
+            });
         }
     }
 }
