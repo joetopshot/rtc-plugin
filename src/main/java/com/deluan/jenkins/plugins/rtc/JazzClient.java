@@ -109,8 +109,15 @@ public class JazzClient {
     }
 
     protected String findSCMExecutable() {
-        String[] cmds = {"scm", "scm.exe", "scm.sh"};
         File file = new File(jazzExecutable);
+
+        // First, check if we can use the configured jazz executable
+        if (file.getName().startsWith("scm")) {
+            return jazzExecutable;
+        }
+
+        // Else, try to find a suitable scm command in the same directory as the configured one
+        String[] cmds = {"scm", "scm.exe", "scm.sh"};
         String installDir = file.getParent();
         if (installDir != null) {
             for (String cmd : cmds) {
@@ -120,6 +127,8 @@ public class JazzClient {
                 }
             }
         }
+
+        // If not found, hope that there is a scm command in the system's PATH
         return SCM_CMD;
     }
 

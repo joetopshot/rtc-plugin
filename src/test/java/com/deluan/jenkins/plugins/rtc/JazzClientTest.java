@@ -75,5 +75,24 @@ public class JazzClientTest {
         assertThat(scmExecutable, is(JazzClient.SCM_CMD));
     }
 
+    @Test
+    public void useConfiguredSCMExecutable() {
+        String installDir = useSystemSeparator("/a/bb/ccc");
+        JazzClient testClient = createTestableJazzClient(null, null, null, installDir + "/scm.sh");
+
+        String scmExecutable = testClient.findSCMExecutable();
+
+        assertThat(scmExecutable, is(installDir + "/scm.sh"));
+    }
+
+    @Test
+    public void useConfiguredSCMExecutableWithoutPath() {
+        JazzClient testClient = createTestableJazzClient(null, null, null, "scm.sh");
+
+        String scmExecutable = testClient.findSCMExecutable();
+
+        assertThat(scmExecutable, is("scm.sh"));
+    }
+
 
 }
