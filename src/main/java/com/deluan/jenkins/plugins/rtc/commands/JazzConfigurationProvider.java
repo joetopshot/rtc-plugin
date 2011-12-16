@@ -19,5 +19,8 @@ public interface JazzConfigurationProvider {
 
     public FilePath getJobWorkspace();
 
+    public boolean isTimeout();
+    
+    public String getTimeoutValue();
 
 }

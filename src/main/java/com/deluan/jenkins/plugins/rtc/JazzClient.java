@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class JazzClient implements JazzConfigurationProvider {
     public static final String SCM_CMD = "scm";
 
-    private static final int TIMEOUT = 60 * 60; // in seconds
+    //private static final int TIMEOUT = 60 * 60; // in seconds
 
     private final Launcher launcher;
     private final TaskListener listener;
@@ -38,12 +38,14 @@ public class JazzClient implements JazzConfigurationProvider {
     private String streamName;
     private String username;
     private String password;
-    private FilePath jobWorkspace;
+    private boolean timeout;   
+	private String timeoutValue;
+    private FilePath jobWorkspace;    
 
 
     public JazzClient(Launcher launcher, TaskListener listener, FilePath jobWorkspace, String jazzExecutable,
                       String user, String password, String repositoryLocation,
-                      String streamName, String workspaceName) {
+                      String streamName, String workspaceName, boolean timeout, String timeoutValue) {
         this.jazzExecutable = jazzExecutable;
         this.launcher = launcher;
         this.listener = listener;
@@ -52,6 +54,8 @@ public class JazzClient implements JazzConfigurationProvider {
         this.repositoryLocation = repositoryLocation;
         this.streamName = streamName;
         this.workspaceName = workspaceName;
+        this.timeout = timeout;
+        this.timeoutValue = timeoutValue;
         this.jobWorkspace = jobWorkspace;
     }
 
@@ -80,7 +84,8 @@ public class JazzClient implements JazzConfigurationProvider {
     public boolean load() throws IOException, InterruptedException {
         Command cmd = new LoadCommand(this);
 
-        return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
+        //return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
+        return (joinWithPossibleTimeout(run(cmd.getArguments()), isTimeout(), listener) == 0);
     }
 
     /**
@@ -96,11 +101,11 @@ public class JazzClient implements JazzConfigurationProvider {
      * @throws InterruptedException
      */
     public boolean stopDaemon() throws IOException, InterruptedException {
-        ArgumentListBuilder args = new ArgumentListBuilder(SCM_CMD);
+        ArgumentListBuilder args = new ArgumentListBuilder(jazzExecutable);
 
         args.add(new StopDaemonCommand(this).getArguments().toCommandArray());
 
-        return (joinWithPossibleTimeout(l(args), true, listener) == 0);
+        return (joinWithPossibleTimeout(l(args), isTimeout(), listener) == 0);
     }
 
     /**
@@ -169,7 +174,7 @@ public class JazzClient implements JazzConfigurationProvider {
     }
 
     private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {
-        return useTimeout ? proc.start().joinWithTimeout(TIMEOUT, TimeUnit.SECONDS, listener) : proc.join();
+        return useTimeout ? proc.start().joinWithTimeout(Long.parseLong(getTimeoutValue()), TimeUnit.SECONDS, listener) : proc.join();
     }
 
     /**
@@ -185,7 +190,7 @@ public class JazzClient implements JazzConfigurationProvider {
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
-        if (joinWithPossibleTimeout(run(args).stdout(fos), true, listener) == 0) {
+        if (joinWithPossibleTimeout(run(args).stdout(fos), isTimeout(), listener) == 0) {
             o.flush();
             return baos;
         } else {
@@ -217,5 +222,14 @@ public class JazzClient implements JazzConfigurationProvider {
     public FilePath getJobWorkspace() {
         return jobWorkspace;
     }
+    
+    public boolean isTimeout() {
+		return timeout;
+	}
+
+	public String getTimeoutValue() {
+		return timeoutValue;
+	}
+
 
 }

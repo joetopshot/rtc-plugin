@@ -35,21 +35,33 @@ public class JazzSCM extends SCM {
     private String streamName;
     private String username;
     private String password;
+    private boolean timeout;
+    private String timeoutValue;
 
     private JazzRepositoryBrowser repositoryBrowser;
 
     @DataBoundConstructor
     public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
-                   String username, String password) {
+                   String username, String password, boolean timeout, String timeoutValue) {
 
         this.repositoryLocation = repositoryLocation;
         this.workspaceName = workspaceName;
         this.streamName = streamName;
         this.username = username;
         this.password = password;
+        this.timeout = timeout;
+        this.timeoutValue = timeoutValue;
     }
 
-    public String getRepositoryLocation() {
+    public boolean isTimeout() {
+		return timeout;
+	}
+
+	public String getTimeoutValue() {
+		return timeoutValue;
+	}
+
+	public String getRepositoryLocation() {
         return repositoryLocation;
     }
 
@@ -71,7 +83,7 @@ public class JazzSCM extends SCM {
 
     private JazzClient getClientInstance(Launcher launcher, TaskListener listener, FilePath jobWorkspace) {
         return new JazzClient(launcher, listener, jobWorkspace, getDescriptor().getJazzExecutable(),
-                username, password, repositoryLocation, streamName, workspaceName);
+                username, password, repositoryLocation, streamName, workspaceName, timeout, timeoutValue);
     }
 
     @Override
@@ -91,11 +103,17 @@ public class JazzSCM extends SCM {
 
     @Override
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
-        JazzClient client = getClientInstance(launcher, listener, workspace);
+        
+    	boolean returnValue = true;
+    	
+    	JazzClient client = getClientInstance(launcher, listener, workspace);
 
         // Forces a load of the workspace. If it's already loaded, the scm command will do nothing.
-        client.load();
-
+    	returnValue = client.load();
+    	if(!returnValue){
+    		return false;
+    	}
+    	
         // Accepts all incoming changes
         List<JazzChangeSet> changes;
         try {
@@ -128,12 +146,12 @@ public class JazzSCM extends SCM {
     public boolean processWorkspaceBeforeDeletion(AbstractProject<?, ?> project, FilePath workspace, Node node) throws IOException, InterruptedException {
         LogTaskListener listener = new LogTaskListener(logger, Level.INFO);
         Launcher launcher = node.createLauncher(listener);
-
+                        
         // Stop any daemon started for the workspace
         JazzClient client = getClientInstance(launcher, listener, workspace);
         client.stopDaemon();
-
         return true;
+        
     }
 
     @Override
@@ -183,6 +201,17 @@ public class JazzSCM extends SCM {
 
         public FormValidation doExecutableCheck(@QueryParameter String value) {
             return FormValidation.validateExecutable(value);
+        }
+        
+        public FormValidation doCheckTimeoutValue(@QueryParameter String value) {
+        	if(value != null && !value.isEmpty()){
+	        	try{
+	        		Long.parseLong(value);
+	        	}catch(NumberFormatException e){
+	        		return FormValidation.error("Bad number for timeout:"+value);
+	        	}
+        	}
+        	return FormValidation.ok();
         }
     }
 }
