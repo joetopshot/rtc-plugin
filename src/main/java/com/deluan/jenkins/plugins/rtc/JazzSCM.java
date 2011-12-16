@@ -30,26 +30,29 @@ import java.util.logging.Logger;
 @SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {
 
-    private static final Logger logger = Logger.getLogger(JazzSCM.class.getName());
+    private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
     private String repositoryLocation;
     private String workspaceName;
     private String streamName;
     private String username;
     private Secret password;
-
+    private Boolean useTimeout;
+    private Long timeoutValue;
     private JazzRepositoryBrowser repositoryBrowser;
     private String version;
 
     @DataBoundConstructor
     public JazzSCM(String repositoryLocation, String workspaceName, String streamName,
-                   String username, String password) {
+                   String username, String password, Boolean useTimeout, Long timeoutValue) {
 
         this.repositoryLocation = repositoryLocation;
         this.workspaceName = workspaceName;
         this.streamName = streamName;
         this.username = username;
         this.password = StringUtils.isEmpty(password) ? null : Secret.fromString(password);
+        this.useTimeout = useTimeout;
+        this.timeoutValue = timeoutValue;
     }
 
     public String getRepositoryLocation() {
@@ -72,11 +75,18 @@ public class JazzSCM extends SCM {
         return Secret.toString(password);
     }
 
+    public Boolean getUseTimeout() {
+        return useTimeout;
+    }
+
+    public Long getTimeoutValue() {
+        return timeoutValue;
+    }
+
     private String getVersion() {
         if (this.version == null) {
             try {
-                JazzClient client = new JazzClient(getDescriptor().getJazzExecutable(), null, new JazzConfiguration());
-                this.version = client.getVersion();
+                this.version = getDescriptor().retrieveScmVersion(getDescriptor().getJazzExecutable());
                 logger.info("Detected scm version: " + this.version);
             } catch (Exception e) {
                 logger.severe("Could not instantiate a JazzClient!");
@@ -115,8 +125,11 @@ public class JazzSCM extends SCM {
     public boolean checkout(AbstractBuild<?, ?> build, Launcher launcher, FilePath workspace, BuildListener listener, File changelogFile) throws IOException, InterruptedException {
         JazzClient client = getClientInstance(launcher, listener, workspace);
 
-        // Forces a load of the workspace. If it's already loaded, the scm command will do nothing.
-        client.load();
+        // Forces a load of the workspace. If it's already loaded, the 'scm load' command will do nothing.
+        boolean loadOk = client.load();
+        if (!loadOk) {
+            return false;
+        }
 
         // Accepts all incoming changes
         List<JazzChangeSet> changes;
@@ -170,6 +183,8 @@ public class JazzSCM extends SCM {
         configuration.setRepositoryLocation(repositoryLocation);
         configuration.setStreamName(streamName);
         configuration.setWorkspaceName(workspaceName);
+        configuration.setUseTimeout(useTimeout);
+        configuration.setTimeoutValue(timeoutValue != null ? timeoutValue : JazzConfiguration.DEFAULT_TIMEOUT);
 
         return configuration;
     }
@@ -214,14 +229,21 @@ public class JazzSCM extends SCM {
             }
         }
 
+        private String retrieveScmVersion(String exePath) throws IOException, InterruptedException {
+            JazzConfiguration configuration = new JazzConfiguration();
+            configuration.setUseTimeout(true);
+            configuration.setTimeoutValue(60L);
+            JazzClient client = new JazzClient(exePath, null, configuration);
+            return client.getVersion();
+        }
+
         public FormValidation doExecutableCheck(@QueryParameter String value) {
             return FormValidation.validateExecutable(value, new FormValidation.FileValidator() {
                 @Override
                 public FormValidation validate(File f) {
                     String exePath = f.getAbsolutePath();
                     try {
-                        JazzClient client = new JazzClient(exePath, null, new JazzConfiguration());
-                        String version = client.getVersion();
+                        String version = retrieveScmVersion(exePath);
                         if (version != null) {
                             return FormValidation.ok("Version " + version + " found");
                         }
@@ -231,6 +253,13 @@ public class JazzSCM extends SCM {
                     return FormValidation.error("Couldn't execute '" + exePath + " version' command");
                 }
             });
+        }
+
+        public FormValidation doCheckTimeoutValue(@QueryParameter String value) {
+            if (StringUtils.isEmpty(value)) {
+                return FormValidation.ok();
+            }
+            return FormValidation.validatePositiveInteger(value);
         }
     }
 }

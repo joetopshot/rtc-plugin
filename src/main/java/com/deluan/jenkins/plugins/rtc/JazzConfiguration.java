@@ -6,12 +6,16 @@ import hudson.FilePath;
  * @author deluan
  */
 public class JazzConfiguration implements Cloneable {
+    public static final Long DEFAULT_TIMEOUT = 60L * 60; // in seconds
+
     private String repositoryLocation;
     private String workspaceName;
     private String streamName;
     private String username;
     private String password;
     private FilePath jobWorkspace;
+    private Boolean useTimeout;
+    private Long timeoutValue;
 
     public String getRepositoryLocation() {
         return repositoryLocation;
@@ -35,6 +39,14 @@ public class JazzConfiguration implements Cloneable {
 
     public FilePath getJobWorkspace() {
         return jobWorkspace;
+    }
+
+    public Boolean isUseTimeout() {
+        return useTimeout;
+    }
+
+    public Long getTimeoutValue() {
+        return timeoutValue;
     }
 
     public void setRepositoryLocation(String repositoryLocation) {
@@ -61,6 +73,14 @@ public class JazzConfiguration implements Cloneable {
         this.jobWorkspace = jobWorkspace;
     }
 
+    public void setUseTimeout(Boolean useTimeout) {
+        this.useTimeout = useTimeout;
+    }
+
+    public void setTimeoutValue(Long timeoutValue) {
+        this.timeoutValue = timeoutValue;
+    }
+
     @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException", "CloneDoesntCallSuperClone"})
     @Override
     public JazzConfiguration clone() {
@@ -72,6 +92,8 @@ public class JazzConfiguration implements Cloneable {
         clone.username = this.username;
         clone.password = this.password;
         clone.jobWorkspace = this.jobWorkspace;
+        clone.useTimeout = this.useTimeout;
+        clone.timeoutValue = this.timeoutValue;
 
         return clone;
     }

@@ -34,8 +34,6 @@ public class JazzClient {
 
     private static final Logger logger = Logger.getLogger(JazzClient.class.getName());
 
-    private static final int TIMEOUT = 60 * 60; // in seconds
-
     private JazzConfiguration configuration = new JazzConfiguration();
     private final Launcher launcher;
     private final TaskListener listener;
@@ -85,7 +83,7 @@ public class JazzClient {
     public boolean load() throws IOException, InterruptedException {
         Command cmd = new LoadCommand(configuration);
 
-        return (joinWithPossibleTimeout(run(cmd.getArguments()), true, listener) == 0);
+        return (joinWithPossibleTimeout(run(cmd.getArguments())) == 0);
     }
 
     /**
@@ -105,7 +103,7 @@ public class JazzClient {
 
         args.add(new StopDaemonCommand(configuration).getArguments().toCommandArray());
 
-        return (joinWithPossibleTimeout(l(args), true, listener) == 0);
+        return (joinWithPossibleTimeout(l(args)) == 0);
     }
 
     protected String findSCMExecutable() {
@@ -215,8 +213,8 @@ public class JazzClient {
         return l(cmd);
     }
 
-    private int joinWithPossibleTimeout(ProcStarter proc, boolean useTimeout, final TaskListener listener) throws IOException, InterruptedException {
-        return useTimeout ? proc.start().joinWithTimeout(TIMEOUT, TimeUnit.SECONDS, listener) : proc.join();
+    private int joinWithPossibleTimeout(ProcStarter proc) throws IOException, InterruptedException {
+        return configuration.isUseTimeout() ? proc.start().joinWithTimeout(configuration.getTimeoutValue(), TimeUnit.SECONDS, listener) : proc.join();
     }
 
     /**
@@ -232,7 +230,7 @@ public class JazzClient {
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
-        if (joinWithPossibleTimeout(run(args).stdout(fos), true, listener) == 0) {
+        if (joinWithPossibleTimeout(run(args).stdout(fos)) == 0) {
             o.flush();
             return baos;
         } else {
