@@ -114,14 +114,14 @@ public class JazzClientTest {
     @Test
     public void testAcceptCommand() throws IOException, InterruptedException {
         JazzClient testClient = createTestableJazzClient(null, null, null, "scm.sh");
-        JazzChangeSet changeSet = createChangeSet("1", new Date(), "deluan", "email@a.com", "msg"); // original JazzChangeSet
 
         Map<String, JazzChangeSet> compareCmdResults = new HashMap<String, JazzChangeSet>();
+        JazzChangeSet changeSet = createChangeSet("1", new Date(), "deluan", "email@a.com", "msg");
         compareCmdResults.put("1", changeSet);
         doReturn(compareCmdResults).when(testClient).compare();
 
         Map<String, JazzChangeSet> acceptCmdResults = new HashMap<String, JazzChangeSet>();
-        JazzChangeSet changeSet2 = createChangeSet(null, new Date(), null, null, null); // original JazzChangeSet
+        JazzChangeSet changeSet2 = createChangeSet(null, new Date(), null, null, null);
         changeSet2.addWorkItem("123 A Work Item");
         acceptCmdResults.put("1", changeSet2);
         doReturn(acceptCmdResults).when(testClient).accept(compareCmdResults.keySet());
