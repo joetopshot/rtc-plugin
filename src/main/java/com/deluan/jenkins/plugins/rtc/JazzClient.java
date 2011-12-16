@@ -230,14 +230,42 @@ public class JazzClient {
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
+        listener.error("Failed to run " + toMaskedCommandLine(args));
         if (joinWithPossibleTimeout(run(args).stdout(fos)) == 0) {
             o.flush();
             return baos;
         } else {
-            listener.error("Failed to run " + args.toStringWithQuote());
+            listener.error("Failed to run " + toMaskedCommandLine(args));
             throw new AbortException();
         }
     }
+
+    /**
+     * A version of ArgumentListBuilder.toStringWithQuote() that also masks fields marked as 'masked'
+     */
+    protected String toMaskedCommandLine(ArgumentListBuilder argsBuilder) {
+        StringBuilder buf = new StringBuilder();
+        List<String> args = argsBuilder.toList();
+        boolean[] masks = argsBuilder.toMaskArray();
+
+        for (int i = 0; i < args.size(); i++) {
+            String arg;
+            if (masks[i]) {
+                arg = "********";
+            } else {
+                arg = args.get(i);
+            }
+
+            if (buf.length() > 0) buf.append(' ');
+
+            if (arg.indexOf(' ') >= 0 || arg.length() == 0)
+                buf.append('"').append(arg).append('"');
+            else
+                buf.append(arg);
+        }
+        return buf.toString();
+    }
+
 
     private Charset getDefaultCharset() {
         // First check if we can get currentComputer. See issue JENKINS-11874

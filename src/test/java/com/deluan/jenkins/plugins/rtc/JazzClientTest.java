@@ -4,6 +4,7 @@ import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
+import hudson.util.ArgumentListBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
@@ -150,6 +151,22 @@ public class JazzClientTest {
         doReturn(acceptCmdResults).when(testClient).accept(compareCmdResults.keySet());
 
         testClient.accept();
+    }
+
+    @Test
+    @Bug(12129)
+    public void toMaskedCommandLine() {
+        JazzClient testClient = createTestableJazzClient(null, null, null, null);
+        String password = "123456";
+
+        ArgumentListBuilder args = new ArgumentListBuilder();
+        args.add("scm", "-p");
+        args.addMasked(password);
+        args.add("-f");
+
+        String printedCommand = testClient.toMaskedCommandLine(args);
+
+        assertThat(printedCommand, is("scm -p ******** -f"));
     }
 
 
