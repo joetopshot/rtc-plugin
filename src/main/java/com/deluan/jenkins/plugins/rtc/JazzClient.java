@@ -177,8 +177,7 @@ public class JazzClient {
     }
 
     private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
-        String version = getVersion();
-        AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version);
+        AcceptCommand cmd = new AcceptCommand(configuration, changeSets, getVersion());
         return execute(cmd);
     }
 

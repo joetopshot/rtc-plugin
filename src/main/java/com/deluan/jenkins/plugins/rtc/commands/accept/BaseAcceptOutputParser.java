@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
 /**
  * @author deluan
  */
-abstract public class BaseAcceptOutputParser {
-    protected Pattern startChangesetPattern;
-    protected Pattern filePattern;
-    protected Pattern workItemPattern;
+public abstract class BaseAcceptOutputParser {
+    private Pattern startChangesetPattern;
+    private Pattern filePattern;
+    private Pattern workItemPattern;
 
     public BaseAcceptOutputParser(String startChangesetPattern, String filePattern, String workItemPattern) {
         this.workItemPattern = Pattern.compile(workItemPattern);
@@ -57,9 +57,9 @@ abstract public class BaseAcceptOutputParser {
         return result;
     }
 
-    abstract protected String parseWorkItem(String string);
+    protected abstract String parseWorkItem(String string);
 
-    abstract protected String parseEditFlag(String string);
+    protected abstract String parseEditFlag(String string);
 
     protected String parsePath(String string) {
         String path = string.replaceAll("\\\\", "/").trim();
