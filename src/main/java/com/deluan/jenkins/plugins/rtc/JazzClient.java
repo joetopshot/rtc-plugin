@@ -169,6 +169,9 @@ public class JazzClient {
             for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
                 JazzChangeSet changeSet1 = entry.getValue();
                 JazzChangeSet changeSet2 = acceptCmdResult.get(entry.getKey());
+                if (changeSet2 == null) {
+                    throw new IOException("'scm accept' output invalid");
+                }
                 changeSet1.copyItemsFrom(changeSet2);
             }
         }
@@ -176,12 +179,12 @@ public class JazzClient {
         return new ArrayList<JazzChangeSet>(compareCmdResults.values());
     }
 
-    private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
+    protected Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
         AcceptCommand cmd = new AcceptCommand(configuration, changeSets, getVersion());
         return execute(cmd);
     }
 
-    private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
+    protected Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
         CompareCommand cmd = new CompareCommand(configuration);
         return execute(cmd);
     }

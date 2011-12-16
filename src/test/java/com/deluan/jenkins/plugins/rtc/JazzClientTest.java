@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc;
 
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.TaskListener;
@@ -8,6 +9,11 @@ import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import static org.hamcrest.core.Is.is;
@@ -92,6 +98,58 @@ public class JazzClientTest {
         String scmExecutable = testClient.findSCMExecutable();
 
         assertThat(scmExecutable, is("scm.sh"));
+    }
+
+    private JazzChangeSet createChangeSet(String rev, Date date, String user, String email, String msg) {
+        JazzChangeSet changeSet = new JazzChangeSet();
+        changeSet.setRev(rev);
+        changeSet.setDate(date);
+        changeSet.setUser(user);
+        changeSet.setMsg(msg);
+        changeSet.setEmail(email);
+
+        return changeSet;
+    }
+
+    @Test
+    public void testAcceptCommand() throws IOException, InterruptedException {
+        JazzClient testClient = createTestableJazzClient(null, null, null, "scm.sh");
+        JazzChangeSet changeSet = createChangeSet("1", new Date(), "deluan", "email@a.com", "msg"); // original JazzChangeSet
+
+        Map<String, JazzChangeSet> compareCmdResults = new HashMap<String, JazzChangeSet>();
+        compareCmdResults.put("1", changeSet);
+        doReturn(compareCmdResults).when(testClient).compare();
+
+        Map<String, JazzChangeSet> acceptCmdResults = new HashMap<String, JazzChangeSet>();
+        JazzChangeSet changeSet2 = createChangeSet(null, new Date(), null, null, null); // original JazzChangeSet
+        changeSet2.addWorkItem("123 A Work Item");
+        acceptCmdResults.put("1", changeSet2);
+        doReturn(acceptCmdResults).when(testClient).accept(compareCmdResults.keySet());
+
+        List<JazzChangeSet> result = testClient.accept();
+        assertThat(result.size(), is(1));
+
+        JazzChangeSet returnedChangeSet = result.get(0);
+        assertThat(returnedChangeSet.getUser(), is("deluan"));
+        assertThat(returnedChangeSet.getWorkItems().size(), is(1));
+
+        String returnedWorkItem = returnedChangeSet.getWorkItems().get(0);
+        assertThat(returnedWorkItem, is(changeSet2.getWorkItems().get(0)));
+    }
+
+    @Test(expected = IOException.class)
+    public void errorParsingAcceptOutput() throws IOException, InterruptedException {
+        JazzClient testClient = createTestableJazzClient(null, null, null, "scm.sh");
+        JazzChangeSet changeSet = createChangeSet("1", new Date(), "deluan", "email@a.com", "msg"); // original JazzChangeSet
+
+        Map<String, JazzChangeSet> compareCmdResults = new HashMap<String, JazzChangeSet>();
+        compareCmdResults.put("1", changeSet);
+        doReturn(compareCmdResults).when(testClient).compare();
+
+        Map<String, JazzChangeSet> acceptCmdResults = new HashMap<String, JazzChangeSet>();
+        doReturn(acceptCmdResults).when(testClient).accept(compareCmdResults.keySet());
+
+        testClient.accept();
     }
 
 
