@@ -230,7 +230,6 @@ public class JazzClient {
 
         PrintStream output = listener.getLogger();
         ForkOutputStream fos = new ForkOutputStream(o, output);
-        listener.error("Failed to run " + toMaskedCommandLine(args));
         if (joinWithPossibleTimeout(run(args).stdout(fos)) == 0) {
             o.flush();
             return baos;
