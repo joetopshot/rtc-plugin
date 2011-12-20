@@ -1,11 +1,15 @@
 package com.deluan.jenkins.plugins.rtc;
 
 import hudson.FilePath;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * @author deluan
  */
-public class JazzConfiguration implements Cloneable {
+public final class JazzConfiguration {
     public static final Long DEFAULT_TIMEOUT = 60L * 60; // in seconds
 
     private String repositoryLocation;
@@ -16,6 +20,20 @@ public class JazzConfiguration implements Cloneable {
     private FilePath jobWorkspace;
     private Boolean useTimeout;
     private Long timeoutValue;
+
+    public JazzConfiguration() {
+    }
+
+    public JazzConfiguration(JazzConfiguration aJazzConfiguration) {
+        this.repositoryLocation = aJazzConfiguration.repositoryLocation;
+        this.workspaceName = aJazzConfiguration.workspaceName;
+        this.streamName = aJazzConfiguration.streamName;
+        this.username = aJazzConfiguration.username;
+        this.password = aJazzConfiguration.password;
+        this.jobWorkspace = aJazzConfiguration.jobWorkspace;
+        this.useTimeout = aJazzConfiguration.useTimeout;
+        this.timeoutValue = aJazzConfiguration.timeoutValue;
+    }
 
     public String getRepositoryLocation() {
         return repositoryLocation;
@@ -81,20 +99,18 @@ public class JazzConfiguration implements Cloneable {
         this.timeoutValue = timeoutValue;
     }
 
-    @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException", "CloneDoesntCallSuperClone"})
     @Override
-    public JazzConfiguration clone() {
-        JazzConfiguration clone = new JazzConfiguration();
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
 
-        clone.repositoryLocation = this.repositoryLocation;
-        clone.workspaceName = this.workspaceName;
-        clone.streamName = this.streamName;
-        clone.username = this.username;
-        clone.password = this.password;
-        clone.jobWorkspace = this.jobWorkspace;
-        clone.useTimeout = this.useTimeout;
-        clone.timeoutValue = this.timeoutValue;
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
 
-        return clone;
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

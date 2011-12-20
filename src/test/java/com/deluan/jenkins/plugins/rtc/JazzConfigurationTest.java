@@ -1,5 +1,6 @@
 package com.deluan.jenkins.plugins.rtc;
 
+import com.gargoylesoftware.base.testing.EqualsTester;
 import hudson.FilePath;
 import net.vidageek.mirror.dsl.Mirror;
 import org.junit.Before;
@@ -9,7 +10,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author deluan
@@ -30,9 +33,17 @@ public class JazzConfigurationTest {
 
     @Test
     public void testClone() throws Exception {
-        JazzConfiguration clone = configuration.clone();
+        JazzConfiguration clone = new JazzConfiguration(configuration);
 
-        assertNoNullFields(clone);
+        assertThat(clone, equalTo(configuration));
+    }
+
+    @Test
+    public void testEqualsAndHash() {
+        final JazzConfiguration a = new JazzConfiguration(configuration);
+        final JazzConfiguration b = new JazzConfiguration(configuration); // another JazzChangeSet that has the same values as the original
+        final JazzConfiguration c = new JazzConfiguration(); // another JazzChangeSet with different values
+        new EqualsTester(a, b, c, null);
     }
 
     private void assertNoNullFields(JazzConfiguration clone) {

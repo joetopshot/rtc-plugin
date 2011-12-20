@@ -46,7 +46,7 @@ public class JazzClient {
         this.listener = new LogTaskListener(logger, Level.FINEST);
         this.launcher = executable.createLauncher(listener);
         this.jazzExecutable = jazzExecutable;
-        this.configuration = configuration.clone();
+        this.configuration = new JazzConfiguration(configuration);
         this.configuration.setJobWorkspace(jobWorkspace);
     }
 
@@ -54,7 +54,7 @@ public class JazzClient {
         this.jazzExecutable = jazzExecutable;
         this.launcher = launcher;
         this.listener = listener;
-        this.configuration = configuration.clone();
+        this.configuration = new JazzConfiguration(configuration);
         this.configuration.setJobWorkspace(jobWorkspace);
     }
 
