@@ -306,7 +306,16 @@ public class JazzClient
 		}
         CompareCommand cmd = new CompareCommand(configuration);
 		cmd.setListener(listener);
-        return execute(cmd);
+		
+		java.util.Map compareResult = null;
+		try {
+			compareResult = execute(cmd);
+		} catch (hudson.AbortException e) {
+			output.println("  RTC SCM - Jazz Client: Compare command detected AbortException");
+			compareResult = new java.util.HashMap();
+			compareResult.put("AbortException", null);
+		}
+		return compareResult;
     }
 
 	private <T> T execute(ParseableCommand<T> cmd) throws IOException, InterruptedException {
