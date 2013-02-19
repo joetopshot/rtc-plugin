@@ -58,6 +58,7 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
 		}  		
 		
 		if (sLoadRules == null || sLoadRules.isEmpty()) {
+			args.add(jazzExecutable);
 			args.add("accept");
 			addLoginArgument(args);
 			
