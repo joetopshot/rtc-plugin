@@ -135,13 +135,6 @@ public class JazzSCM extends SCM {
 			workspaceName2 = workspaceName.replace("${NODE_NAME}", nodeName);
 			workspaceName2 = workspaceName2.replace("${JOB_NAME}", build.getProject().getName());
 
-			try {
-				FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-				fos.write("compare remote rev\n".getBytes());
-				fos.flush();
-				fos.close();
-			} catch (Exception e) {
-			}
 			JazzClient client = getClientInstance(launcher, listener, workspace);
 			try {
 				//return PollingResult.SIGNIFICANT;
@@ -240,7 +233,7 @@ public class JazzSCM extends SCM {
 		private void printError(String fileName, String error) {
 			FileOutputStream fos = null;
 			try {
-				fos = new FileOutputStream(fileName + "\\error.txt");
+				fos = new FileOutputStream(fileName + File.separator + "error.txt");
 				fos.write(error.getBytes(), 0, error.length());
 				fos.close();
 			} catch (Exception e) {
@@ -302,7 +295,7 @@ public class JazzSCM extends SCM {
 		
 		JazzConfiguration config = getConfiguration();
 		try {
-			path.act(new com.deluan.jenkins.plugins.rtc.commands.LoadCommand.RemoteFileWriter(path.getRemote() + "\\" + build.getFullDisplayName().substring(0, build.getFullDisplayName().indexOf(" ")) + ".txt", config.getLoadRules()));
+			path.act(new com.deluan.jenkins.plugins.rtc.commands.LoadCommand.RemoteFileWriter(path.getRemote() + File.separator + build.getFullDisplayName().substring(0, build.getFullDisplayName().indexOf(" ")) + ".txt", config.getLoadRules()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			config.consoleOut("exception: " + e);
@@ -316,7 +309,7 @@ public class JazzSCM extends SCM {
 		cmd.setPassword(config.getPassword());
 		cmd.setWorkspaceName(config.getWorkspaceName());
 		cmd.setTimeToCheck("" + lastBuild.getTimeInMillis());
-		cmd.setLoadRulesFileName("\"" + path.getRemote() + "\\" + build.getFullDisplayName().substring(0, build.getFullDisplayName().indexOf(" ")) + ".txt\"");
+		cmd.setLoadRulesFileName(File.separator + path.getRemote() + File.separator + build.getFullDisplayName().substring(0, build.getFullDisplayName().indexOf(" ")) + ".txt\"");
 		cmd.setMessage("Workitem built by Jenkins build job " + build.getFullDisplayName());
 		cmd.setURLLink("http://" + controllerName + ":" + controllerPort + "/job/" + build.getFullDisplayName().substring(0, build.getFullDisplayName().indexOf(" ")) + "/" + build.getNumber());
 

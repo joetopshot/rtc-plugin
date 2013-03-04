@@ -72,13 +72,6 @@ public class JazzClient
      * @throws InterruptedException
 	****************************************************/
     public boolean hasChanges() throws IOException, InterruptedException {
-		try {
-			FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-			fos.write("has changes\n".getBytes());
-			fos.flush();
-			fos.close();
-		} catch (Exception e) {
-		}
         Map<String, JazzChangeSet> changes = compare();
 		
 		PrintStream output = listener.getLogger();
@@ -297,13 +290,6 @@ public class JazzClient
 		PrintStream output = listener.getLogger();
 		output.println("  RTC SCM - Jazz Client: Compare...");
 
-		try {
-			FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-			fos.write("compare in JazzClient\n".getBytes());
-			fos.flush();
-			fos.close();
-		} catch (Exception e) {
-		}
         CompareCommand cmd = new CompareCommand(configuration);
 		cmd.setListener(listener);
 		
@@ -332,13 +318,6 @@ public class JazzClient
 		PrintStream output = listener.getLogger();
 		//output.println("  RTC SCM - Jazz Client: Execute.");
 
-		try {
-			FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-			fos.write("execute in JazzClient\n".getBytes());
-			fos.flush();
-			fos.close();
-		} catch (Exception e) {
-		}
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 new ByteArrayInputStream(popen(cmd.getArguments(), jazzExecutable).toByteArray())));
         T result;
@@ -376,14 +355,6 @@ public class JazzClient
 		PrintStream output = listener.getLogger();
 		//output.println(consoleString);
 		
-		try  {
-			FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-			fos.write(args.toStringWithQuote().getBytes());
-			fos.flush();
-			fos.close();
-		}  catch (Exception e) {
-		}
-		
 		// set the default stdout
 		return launcher.launch().cmds(args).stdout(listener);
 	}
@@ -394,14 +365,6 @@ public class JazzClient
 	
 	****************************************************/
 	protected ProcStarter run(ArgumentListBuilder args, String command) {
-		try {
-			FileOutputStream fos = new FileOutputStream("N:\\temp\\RTCPluginLog.txt", true);
-			fos.write("Run in JazzClient\n".getBytes());
-			fos.flush();
-			fos.close();
-		} catch (Exception e) {
-		}
-		
 		if (command != null) {
 			args = args.clone().prepend(command);
 		}
