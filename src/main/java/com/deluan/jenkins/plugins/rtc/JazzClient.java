@@ -281,22 +281,8 @@ public class JazzClient
 	
 	****************************************************/
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
- 		//output to console.
-		PrintStream output = listener.getLogger();
-		output.println("  RTC SCM - Jazz Client: Compare...");
-
         CompareCommand cmd = new CompareCommand(configuration);
-		cmd.setListener(listener);
-		
-		java.util.Map compareResult = null;
-		try {
-			compareResult = execute(cmd);
-		} catch (hudson.AbortException e) {
-			output.println("  RTC SCM - Jazz Client: Compare command detected AbortException");
-			compareResult = new java.util.HashMap();
-			compareResult.put("AbortException", null);
-		}
-		return compareResult;
+		return execute(cmd);
     }
 
 	private <T> T execute(ParseableCommand<T> cmd) throws IOException, InterruptedException {
