@@ -492,10 +492,12 @@ public class JazzSCM extends SCM {
 
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
-            jazzExecutable = Util.fixEmpty(req.getParameter("rtc.jazzExecutable").trim());
-			RTCServerURL = Util.fixEmpty(req.getParameter("rtc.RTCServerURL").trim());
-			RTCUserName = Util.fixEmpty(req.getParameter("rtc.RTCUserName").trim());
-			RTCPassword = Secret.fromString(Util.fixEmpty(req.getParameter("rtc.RTCPassword")).trim());
+            jazzExecutable = Util.fixEmptyAndTrim(req.getParameter("rtc.jazzExecutable"));
+            RTCServerURL = Util.fixEmptyAndTrim(req.getParameter("rtc.RTCServerURL"));
+            RTCUserName = Util.fixEmptyAndTrim(req.getParameter("rtc.RTCUserName"));
+            String pass = Util.fixEmptyAndTrim(req.getParameter("rtc.RTCPassword"));
+            RTCPassword = (pass == null) ? null : Secret.fromString(pass);
+            
             save();
             return true;
         }
