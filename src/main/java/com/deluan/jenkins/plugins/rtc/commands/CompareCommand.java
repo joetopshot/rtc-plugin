@@ -107,7 +107,7 @@ public class CompareCommand extends AbstractCommand implements ParseableCommand<
     private String parseMessage(String string) {
         String msg = string.trim();
         if (msg.startsWith("\"")) {
-            int closingQuotes = msg.lastIndexOf("\"");
+            int closingQuotes = msg.lastIndexOf('\"');
             msg = msg.substring(1, closingQuotes).trim();
         }
         return msg;
