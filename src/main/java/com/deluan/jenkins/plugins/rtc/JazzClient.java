@@ -15,6 +15,7 @@ import org.kohsuke.stapler.framework.io.WriterOutputStream;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -268,11 +269,16 @@ public class JazzClient
 		output.println("  RTC SCM - Jazz Client: Accept...");
         String version = getVersion(); // TODO The version should be checked when configuring the Jazz Executable
         
-        //configuration.display("JazzClient() - accept(2)");
+    	String[] streams = configuration.getStreamNames();
+    	Map<String, JazzChangeSet> returnObject = new LinkedHashMap<String, JazzChangeSet>();
+    	
+    	for(int i = 0; i < streams.length; i++) {
+    		configuration.setStreamIndex(i+1);
+    		AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version, listener, jazzExecutable);
+    		returnObject.putAll(execute(cmd));
+    	}
         
-        AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version, listener, jazzExecutable);
-        return execute(cmd, null);
-		//return joinWithPossibleTimeout(run(cmd.getArguments(), null), true, listener, null) == 0;
+        return returnObject;
     }
 
 	/****************************************************
@@ -281,8 +287,20 @@ public class JazzClient
 	
 	****************************************************/
     private Map<String, JazzChangeSet> compare() throws IOException, InterruptedException {
-        CompareCommand cmd = new CompareCommand(configuration);
-		return execute(cmd);
+    	
+    	PrintStream output = listener.getLogger();
+		output.println("  RTC SCM - Jazz Client: compare...");
+    	
+    	Map<String, JazzChangeSet> returnObject = new LinkedHashMap<String, JazzChangeSet>();
+    	String[] streams = configuration.getStreamNames();
+    	
+    	for(int i = 0; i < streams.length; i++) {
+    		configuration.setStreamIndex(i);
+    		CompareCommand cmd = new CompareCommand(configuration);
+    		returnObject.putAll(execute(cmd));
+    	}
+    	
+		return returnObject;
     }
 
 	private <T> T execute(ParseableCommand<T> cmd) throws IOException, InterruptedException {

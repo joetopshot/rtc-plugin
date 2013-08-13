@@ -19,7 +19,8 @@ public final class JazzConfiguration {
     private String nodeName;
     private String jobName;
     private String agentsUsingCommonWorkspace;
-    private String streamName;
+    private String[] streamNames;
+    private int streamIndex; // TODO JC I dont know if this where this should live...
     private String loadRules;
     private AbstractBuild build;
     private String username;
@@ -45,7 +46,7 @@ public final class JazzConfiguration {
         this.build = aJazzConfiguration.build;
         this.listener = aJazzConfiguration.listener;
         
-        this.streamName = aJazzConfiguration.streamName;
+        this.streamNames = aJazzConfiguration.streamNames;
         this.loadRules = aJazzConfiguration.loadRules;
         
         this.username = aJazzConfiguration.username;
@@ -106,8 +107,20 @@ public final class JazzConfiguration {
         return jobName;
     }
 
+    public String[] getStreamNames() {
+        return streamNames;
+    }
+    
     public String getStreamName() {
-        return streamName;
+    	return streamNames[this.streamIndex];
+    }
+    
+    public String getStreamName(int index) {
+    	return streamNames[index];
+    }
+    
+    public int getStreamIndex() {
+    	return streamIndex;
     }
 
     public String getLoadRules() {
@@ -180,8 +193,18 @@ public final class JazzConfiguration {
         this.agentsUsingCommonWorkspace = agentsUsingCommonWorkspace;
     }
 
+    /**
+     * Part of enhancing the plugin to accept multiple streams we now expect a 
+     * semi colon delimited list that we store as a string array
+     * @param streamName
+     */
     public void setStreamName(String streamName) {
-        this.streamName = streamName;
+    	// TODO JC Do we need to trim here?
+    	this.streamNames = streamName.split(";");
+    }
+    
+    public void setStreamIndex(int index) {
+    	this.streamIndex = index;
     }
 
     public void setLoadRules(String loadRules) {
@@ -254,7 +277,7 @@ public final class JazzConfiguration {
 		    output.println("   * nodeName: [" + nodeName + "]");
 		    output.println("   * jobName: [" + jobName + "]");
 		    output.println("   * agentsUsingCommonWorkspace: [" + agentsUsingCommonWorkspace + "]");
-		    output.println("   * streamName: [" + streamName + "]");
+		    output.println("   * streamName: [" + streamNames + "]");
 		    output.println("   * loadRules: [" + loadRules + "]");
     	}
     }

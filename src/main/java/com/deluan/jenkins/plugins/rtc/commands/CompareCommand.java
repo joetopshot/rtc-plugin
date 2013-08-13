@@ -1,9 +1,6 @@
 package com.deluan.jenkins.plugins.rtc.commands;
 
-import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
-import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
 import hudson.util.ArgumentListBuilder;
-import hudson.model.TaskListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,13 +8,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.StringTokenizer;
 
-/**
- * @author deluan
- */
+import com.deluan.jenkins.plugins.rtc.JazzConfiguration;
+import com.deluan.jenkins.plugins.rtc.changelog.JazzChangeSet;
+
 public class CompareCommand extends AbstractCommand implements ParseableCommand<Map<String, JazzChangeSet>> {
     private static final Logger logger = Logger.getLogger(CompareCommand.class.getName());
 

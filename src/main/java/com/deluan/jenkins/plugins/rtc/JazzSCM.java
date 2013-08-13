@@ -29,9 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.GregorianCalendar;
 
-/**
- * @author deluan
- */
 @SuppressWarnings("UnusedDeclaration")
 public class JazzSCM extends SCM {
 
