@@ -273,7 +273,7 @@ public class JazzClient
     	Map<String, JazzChangeSet> returnObject = new LinkedHashMap<String, JazzChangeSet>();
     	
     	for(int i = 0; i < streams.length; i++) {
-    		configuration.setStreamIndex(i+1);
+    		configuration.setStreamIndex(i);
     		AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version, listener, jazzExecutable);
     		returnObject.putAll(execute(cmd));
     	}

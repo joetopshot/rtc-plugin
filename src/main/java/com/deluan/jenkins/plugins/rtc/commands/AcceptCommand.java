@@ -58,9 +58,12 @@ public class AcceptCommand extends AbstractCommand implements ParseableCommand<M
 		}  		
 		
 		if (sLoadRules == null || sLoadRules.isEmpty()) {
-			args.add(jazzExecutable);
+
 			args.add("accept");
 			addLoginArgument(args);
+			
+			args.add("-s");
+			args.add(getConfig().getStreamName());
 			
 			if (getConfig().isUsingSharedWorkspace() == false) {
 				addLocalWorkspaceArgument(args);
