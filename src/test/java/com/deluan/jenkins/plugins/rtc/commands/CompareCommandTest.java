@@ -13,7 +13,7 @@ public class CompareCommandTest extends BaseCommandTest {
     public void compareCommandArguments() throws Exception {
         CompareCommand cmd = new CompareCommand(config);
 
-        assertEquals("compare ws \"My Workspace\" stream \"My Stream\" -u user -P password -r https://jazz/jazz -I dcsf -C \"|{name}|{email}|\" -D \"|yyyy-MM-dd-HH:mm:ss|\"", cmd.getArguments().toStringWithQuote());
+        assertEquals("compare ws \"My Workspace\" stream \"My Stream\" -u user -P password -r https://jazz/jazz -I s -C \"|{name}|{email}|\" -D \"|yyyy-MM-dd-HH:mm:ss|\"", cmd.getArguments().toStringWithQuote());
     }
 
    /* @Test
