@@ -126,7 +126,12 @@ public class JazzSCM extends SCM {
     @Override
     protected PollingResult compareRemoteRevisionWith(AbstractProject<?, ?> project, Launcher launcher, FilePath workspace, TaskListener listener, SCMRevisionState baseline) throws IOException, InterruptedException {
 		PollingResult result;
-
+		
+		if(project.isBuilding()) {
+			PrintStream output = listener.getLogger();
+			output.println("Build in progress. Pulling aborted.");
+			return PollingResult.NO_CHANGES;
+		}
 		AbstractBuild<?, ?> build = project.getSomeBuildWithWorkspace();
 		this.build = build;
 		if (build == null) {
