@@ -162,6 +162,42 @@ public final class JazzChangeSet extends ChangeLogSet.Entry implements Comparabl
                 toString();
     }
 
+    
+    /**
+     *  Returns more detailed info than toString(), including the workitem and file
+     *  path information.
+     */
+    public String toStringDetails() {
+    	StringBuilder workItemString = new StringBuilder("[");
+    	boolean first = true;
+    	for (String workItem : workItems) {
+    		if (!first) {
+    			workItemString.append(",");
+    		}
+			first = false;
+    		workItemString.append(workItem);
+    	}
+    	workItemString.append("]");
+    	
+    	StringBuilder fileString = new StringBuilder("[");
+    	first = true;
+    	for (Item item : items) {
+    		if (!first) {
+    			fileString.append(",");
+    		}
+    		first = false;
+    		fileString.append("{");
+    		fileString.append(item.path);
+    		fileString.append(",");
+    		fileString.append(item.action);
+    		fileString.append("}");
+    	}
+    	fileString.append("]");
+    	
+    	return toString() + " " + workItemString + "," + fileString;
+    }
+    
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

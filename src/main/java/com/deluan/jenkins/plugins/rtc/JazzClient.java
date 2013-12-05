@@ -216,29 +216,31 @@ public class JazzClient
         if (!compareCmdResults.isEmpty()) {
        		output.println("      -- " + compareCmdResults.values().size() + " Code Changes - Detected --");
 			
-			//Remove any changesets that are component additions
-			//	what happens if the addition is the only change?
-			//	does accept command change for components/changesets
-			//output.println(compareCmdResults.keySet().size() + " changesets.");
-			boolean componentsChanged = false;
-			if (compareCmdResults.containsKey("Added component")) {
-				compareCmdResults.remove("Added component");
-				componentsChanged = true;
-			}
-			//output.println(compareCmdResults.keySet().size() + " changesets AFTER.");
+		//Remove any changesets that are component additions
+		//	what happens if the addition is the only change?
+		//	does accept command change for components/changesets
+		//output.println(compareCmdResults.keySet().size() + " changesets.");
+		boolean componentsChanged = false;
+		if (compareCmdResults.containsKey("Added component")) {
+		    compareCmdResults.remove("Added component");
+		    componentsChanged = true;
+		}
+		//output.println(compareCmdResults.keySet().size() + " changesets AFTER.");
 
-			accept(compareCmdResults.keySet());
+		Map<String, JazzChangeSet> acceptResults = accept(compareCmdResults.keySet());
 			
-			if (componentsChanged) {
-				load();
-			}
+		if (componentsChanged) {
+		    load();
+		}
 
-            /*for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
-                JazzChangeSet changeSet1 = entry.getValue();
-                JazzChangeSet changeSet2 = acceptCmdResult.get(entry.getKey());
-                changeSet1.copyItemsFrom(changeSet2);
-            }*/
-			
+		// Merge the data from the accept command into the original compare results data
+		for (Map.Entry<String, JazzChangeSet> entry : compareCmdResults.entrySet()) {
+		    JazzChangeSet basicItem = entry.getValue();
+		    JazzChangeSet extraItem = acceptResults.get(entry.getKey());
+		    if (extraItem != null)
+			basicItem.copyItemsFrom(extraItem);
+		}
+
             output.println("      -- Code Changes - 'Accept' Complete");
         } else {
        		output.println("      -- NO Code Changes Detected");
@@ -264,18 +266,27 @@ public class JazzClient
 	
 	****************************************************/
     private Map<String, JazzChangeSet> accept(Collection<String> changeSets) throws IOException, InterruptedException {
- 		//output to console.
-		PrintStream output = listener.getLogger();
-		output.println("  RTC SCM - Jazz Client: Accept...");
+	//output to console.
+	PrintStream output = listener.getLogger();
+	output.println("  RTC SCM - Jazz Client: Accept...");
         String version = getVersion(); // TODO The version should be checked when configuring the Jazz Executable
         
     	String[] streams = configuration.getStreamNames();
     	Map<String, JazzChangeSet> returnObject = new LinkedHashMap<String, JazzChangeSet>();
     	
     	for(int i = 0; i < streams.length; i++) {
-    		configuration.setStreamIndex(i);
-    		AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version, listener, jazzExecutable);
-    		returnObject.putAll(execute(cmd));
+	    configuration.setStreamIndex(i);
+	    AcceptCommand cmd = new AcceptCommand(configuration, changeSets, version, listener, jazzExecutable);
+	    Map<String, JazzChangeSet> acceptResults = execute(cmd);
+	    // for debugging
+	    /*
+	    output.println("DEBUG: results of calling accept...");
+	    for (String key : acceptResults.keySet()) {
+		output.println("DEBUG: accept key = " + key + ": " + acceptResults.get(key).toStringDetails());
+	    }
+	    */
+    		
+	    returnObject.putAll(acceptResults);
     	}
         
         return returnObject;
